@@ -1,0 +1,34 @@
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-default {
+  background-color: var(--border);
+  color: var(--text-main);
+}
+
+.badge-success {
+  background-color: var(--secondary-light);
+  color: var(--secondary);
+}
+
+.badge-warning {
+  background-color: var(--warning-light);
+  color: var(--warning);
+}
+
+.badge-danger {
+  background-color: var(--danger-light);
+  color: var(--danger);
+}
+
+.badge-primary {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}

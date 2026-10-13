@@ -1,0 +1,38 @@
+{
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[verbose] [DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+    "[log] =========================================",
+    "[log] 🔄 [DEXIE DIAGNOSTIK] Inisialisasi Database Sukses",
+    "[log] ▶ Versi Database Saat Ini: 8",
+    "[log] ▶ Daftar Object Store yang aktif:",
+    "[log]   - ✅ users",
+    "[log]   - ✅ products",
+    "[log]   - ✅ transactions",
+    "[log]   - ✅ transaction_items",
+    "[log]   - ✅ customers",
+    "[log]   - ✅ expenses",
+    "[log]   - ✅ stock_movements",
+    "[log]   - ✅ suppliers",
+    "[log]   - ✅ supplier_purchases",
+    "[log]   - ✅ cash_sessions",
+    "[log]   - ✅ sync_queue",
+    "[log]   - ✅ batches",
+    "[log]   - ✅ restock_requests",
+    "[log]   - ✅ approvals",
+    "[log]   - ✅ audit_logs",
+    "[log]   - ✅ stock_adjustments",
+    "[log]   - ✅ notifications",
+    "[log] ========================================="
+  ],
+  "network": [
+    {
+      "url": "http://localhost:5173/favicon.svg",
+      "status": 200,
+      "mime": "image/svg+xml"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,11 @@
+{
+  "qrisImgInDOM": null,
+  "consoleLogs": [],
+  "networkLogs": [
+    {
+      "url": "http://localhost:5173/src/assets/qrisnafa.jpeg?import",
+      "status": 200,
+      "mime": "text/javascript"
+    }
+  ]
+}

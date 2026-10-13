@@ -1,0 +1,146 @@
+.app-datepicker-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.app-datepicker-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+.app-datepicker-container {
+  position: relative;
+  width: 100%;
+}
+
+.app-datepicker-trigger {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  font-size: 14px;
+  font-family: var(--font-family);
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-datepicker-trigger:focus,
+.app-datepicker-trigger.open {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-light);
+  background-color: var(--surface);
+}
+
+.app-datepicker-trigger.error {
+  border-color: var(--danger);
+}
+.app-datepicker-trigger.error:focus {
+  box-shadow: 0 0 0 4px var(--danger-light);
+}
+
+.trigger-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.calendar-icon {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+.app-datepicker-trigger:focus .calendar-icon,
+.app-datepicker-trigger.open .calendar-icon {
+  color: var(--primary);
+}
+
+.placeholder-text {
+  color: var(--text-muted);
+}
+
+.app-datepicker-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  padding: 24px;
+  animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top left;
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-5px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.app-datepicker-helper {
+  font-size: 12px;
+  margin-top: 6px;
+  color: var(--text-muted);
+}
+
+/* ------------------------------------- */
+/* REFINING REACT-DAY-PICKER (v10)      */
+/* ------------------------------------- */
+
+.rdp-root {
+  --rdp-accent-color: var(--primary);
+  --rdp-accent-background-color: var(--primary-light);
+  --rdp-day-height: 40px;
+  --rdp-day-width: 40px;
+  --rdp-today-color: var(--primary);
+  margin: 0;
+}
+
+/* Prevent global table styles in index.css from breaking the calendar grid */
+.app-datepicker-popover table {
+  width: auto;
+  border-collapse: separate;
+  margin: 0;
+  border-spacing: 0;
+}
+
+.app-datepicker-popover th,
+.app-datepicker-popover td {
+  padding: 0;
+  border: none;
+  text-align: center;
+}
+
+/* Prevent default button overrides from breaking navigation buttons */
+.app-datepicker-popover button {
+  width: auto;
+  min-width: 0;
+  margin: 0;
+}
+
+/* Fix dropdown spacing in the header */
+.rdp-dropdown_month, .rdp-dropdown_year {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  font-size: 14px;
+  color: var(--text-main);
+  cursor: pointer;
+  outline: none;
+}
+.rdp-dropdown_month:focus, .rdp-dropdown_year:focus {
+  border-color: var(--primary);
+}
