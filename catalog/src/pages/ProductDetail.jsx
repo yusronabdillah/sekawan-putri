@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, ShoppingCart, AlertCircle } from 'lucide-react';
 import { generateDescription } from '../utils/helpers';
-import { getFallbackImage } from './Home';
+import ProductIllustration from '../components/ProductIllustration';
 
 export default function ProductDetail({ products, WA_NUMBER }) {
   const { id } = useParams();
@@ -15,6 +15,12 @@ export default function ProductDetail({ products, WA_NUMBER }) {
   const product = useMemo(() => {
     return products.find(p => p.id === id);
   }, [products, id]);
+
+  React.useEffect(() => {
+    if (product) {
+      document.title = `${product.name} - Sekawan Putri Frozen Food`;
+    }
+  }, [product]);
 
   if (!product) {
     return (
@@ -29,10 +35,11 @@ export default function ProductDetail({ products, WA_NUMBER }) {
   const isAvailable = stock > 0;
   
   const description = generateDescription(product.name, product.category, product.description);
-  const imgUrl = product.image_url || getFallbackImage(product.category, product.name);
+  const hasImage = Boolean(product.image_url && product.image_url.trim() !== '');
+  const priceText = product.price > 0 ? `Rp ${product.price.toLocaleString('id-ID')}` : 'Harga Menyesuaikan';
 
   const handleOrderWhatsApp = () => {
-    const message = `Halo Sekawan Putri Frozen Food, saya ingin memesan:\n\n*${product.name}*\nHarga: Rp ${product.price.toLocaleString('id-ID')}\n\nApakah stoknya masih ada?`;
+    const message = `Halo Sekawan Putri Frozen Food, saya ingin memesan:\n\n*${product.name}*\nHarga: ${priceText}\n\nApakah stoknya masih ada?`;
     const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
@@ -47,21 +54,25 @@ export default function ProductDetail({ products, WA_NUMBER }) {
 
           <div className="detail-grid">
             <div className="detail-image-wrapper">
-              <img src={imgUrl} alt={product.name} />
+              {hasImage ? (
+                <img src={product.image_url} alt={product.name} />
+              ) : (
+                <ProductIllustration name={product.name} category={product.category} size="detail" />
+              )}
             </div>
             
             <div className="detail-content">
-              <div className="detail-category">{product.category || 'Premium Product'}</div>
+              <div className="detail-category">{product.category || 'Produk Pilihan'}</div>
               <h1 className="detail-title">{product.name}</h1>
               
               <div className="stock-info">
                 <div className={`stock-dot ${stock > 10 ? 'high' : (stock > 0 ? 'low' : 'out')}`}></div>
                 Status: {isAvailable ? <span style={{color: 'var(--success)'}}>Tersedia</span> : <span style={{color: 'var(--danger)'}}>Habis</span>} 
                 <span style={{color: 'var(--border)', margin: '0 8px'}}>|</span> 
-                Sisa Stok: {stock} {product.unit ? product.unit.toLowerCase() : (stock % 1 !== 0 ? 'kg' : 'pack')}
+                Sisa Stok: {stock} {product.unit ? product.unit.toLowerCase() : 'pcs'}
               </div>
 
-              <div className="detail-price">Rp {(product.price || 0).toLocaleString('id-ID')}</div>
+              <div className="detail-price">{priceText}</div>
 
               <p className="detail-desc">{description}</p>
               
@@ -84,7 +95,7 @@ export default function ProductDetail({ products, WA_NUMBER }) {
         <div className="sticky-bottom-inner">
           <div className="detail-title-small" style={{display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden'}}>
             <strong style={{fontSize: '16px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{product.name}</strong>
-            <span style={{color: 'var(--primary)', fontWeight: '800', fontSize: '18px'}}>Rp {(product.price || 0).toLocaleString('id-ID')}</span>
+            <span style={{color: 'var(--primary)', fontWeight: '800', fontSize: '18px'}}>{priceText}</span>
           </div>
           <button 
             className="btn btn-whatsapp" 

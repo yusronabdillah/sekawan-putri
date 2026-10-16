@@ -1,115 +1,434 @@
-SKU,Nama Produk,Kategori,Harga Jual,Stok Awal,Satuan,Barcode,Minimum Stok,Status
-SKW00001,SOSIS VIGO (ISI 21),Sosis,16000,20,Pack,SKW00001,5,Aktif
-SKW00002,SOSIS CHAMP AYAM (ISI 15),Sosis,19000,20,Pack,SKW00002,5,Aktif
-SKW00003,SOSIS SALAM MERAH 500GR,Sosis,18000,20,Pack,SKW00003,5,Aktif
-SKW00004,SOSIS SALAM MERAH 750GR,Sosis,26000,20,Pack,SKW00004,5,Aktif
-SKW00005,SOSIS NGETOP 250GR,Sosis,11000,20,Pack,SKW00005,5,Aktif
-SKW00006,SOSIS NGETOP 500GR,Sosis,19000,20,Pack,SKW00006,5,Aktif
-SKW00007,SOSIS AYAM VENNO 500GR,Sosis,19000,20,Pack,SKW00007,5,Aktif
-SKW00008,SOSIS UMIAMI COCKTAIL,Sosis,18000,20,Pack,SKW00008,5,Aktif
-SKW00009,SOSIS UMIAMI ULIR 500GR,Sosis,18000,20,Pack,SKW00009,5,Aktif
-SKW00010,SOSIS UMIAMI ULIR 750GR,Sosis,25000,20,Pack,SKW00010,5,Aktif
-SKW00011,SOSIS KAMIL 450GR,Sosis,32000,20,Pack,SKW00011,5,Aktif
-SKW00012,SOSIS MUANTAP SAPI 500GR,Sosis,18000,20,Pack,SKW00012,5,Aktif
-SKW00013,SOSIS HORECA VP 500GR,Sosis,32000,20,Pack,SKW00013,5,Aktif
-SKW00014,SOSIS HORECA VP 1KG,Sosis,62000,20,Pack,SKW00014,5,Aktif
-SKW00015,SOSIS BAKAR MUANTAP (ISI 3),Sosis,10000,20,Pack,SKW00015,5,Aktif
-SKW00016,SOSIS BAKAR SALAM (ISI 3),Sosis,10000,20,Pack,SKW00016,5,Aktif
-SKW00017,SOSIS BAKAR NGEJOSS MINI 500GR,Sosis,25000,20,Pack,SKW00017,5,Aktif
-SKW00018,SOSIS BAKAR TORA DUO (ISI 13),Sosis,27000,20,Pack,SKW00018,5,Aktif
-SKW00019,SOSIS BAKAR MUANTAP MINI 500GR,Sosis,27000,20,Pack,SKW00019,5,Aktif
-SKW00020,SOSIS BAKAR MISTER MAX 500GR,Sosis,26000,20,Pack,SKW00020,5,Aktif
-SKW00021,SOSIS SALAM SAPI 500GR,Sosis,18000,20,Pack,SKW00021,5,Aktif
-SKW00022,SOSIS BAKAR SO NICE 500GR,Sosis,26500,20,Pack,SKW00022,5,Aktif
-SKW00023,SOSIS KAMIL (ISI 3),Sosis,6000,20,Pack,SKW00023,5,Aktif
-SKW00024,SOSIS CHAMP (ISI 3),Sosis,5000,20,Pack,SKW00024,5,Aktif
-SKW00025,SOSIS SO NICE (ISI 3),Sosis,5000,20,Pack,SKW00025,5,Aktif
-SKW00026,SOSIS UENAAK (ISI 3),Sosis,5000,20,Pack,SKW00026,5,Aktif
-SKW00027,BAKSO MAJU MAPAN (ISI 50),Bakso,15000,20,Pack,SKW00027,5,Aktif
-SKW00028,BAKSO MAJU MAPAN (ISI 10),Bakso,5000,20,Pack,SKW00028,5,Aktif
-SKW00029,BAKSO SALAM SAPI (ISI 10),Bakso,5000,20,Pack,SKW00029,5,Aktif
-SKW00030,BAKSO SALAM SAPI (ISI 50),Bakso,20000,20,Pack,SKW00030,5,Aktif
-SKW00031,BAKSO SALAM AYAM,Bakso,19000,20,Pack,SKW00031,5,Aktif
-SKW00032,BAKSO SALAM AYAM KERIKIL,Bakso,19000,20,Pack,SKW00032,5,Aktif
-SKW00033,BAKSO SAPI VITALIA,Bakso,10000,20,Pack,SKW00033,5,Aktif
-SKW00034,BAKSO SAPI HORECA 700GR,Bakso,45000,20,Pack,SKW00034,5,Aktif
-SKW00035,MINAKU BOLA IKAN 500GR,Seafood Frozen,25000,20,Pack,SKW00035,5,Aktif
-SKW00036,MINAKU BOLA CUMI 500GR,Seafood Frozen,28000,20,Pack,SKW00036,5,Aktif
-SKW00037,MINAKU BOLA UDANG 500GR,Seafood Frozen,28000,20,Pack,SKW00037,5,Aktif
-SKW00038,MINAKU OTAK-OTAK 500GR,Seafood Frozen,21000,20,Pack,SKW00038,5,Aktif
-SKW00039,MITRAKU BAKSO MIX 500GR,Seafood Frozen,26000,20,Pack,SKW00039,5,Aktif
-SKW00040,SHIFUDO BAKSO IKAN 500GR,Seafood Frozen,23000,20,Pack,SKW00040,5,Aktif
-SKW00041,MITRAKU MIX DUMPLING 500GR,Dumpling,29000,20,Pack,SKW00041,5,Aktif
-SKW00042,ILM BAKSO IKAN PREMIUM,Seafood Frozen,12000,20,Pack,SKW00042,5,Aktif
-SKW00043,NUGGET NGEJOSS 250GR,Nugget,11000,20,Pack,SKW00043,5,Aktif
-SKW00044,NUGGET NGEJOSS 500GR,Nugget,18000,20,Pack,SKW00044,5,Aktif
-SKW00045,NUGGET SALAM 250GR,Nugget,11000,20,Pack,SKW00045,5,Aktif
-SKW00046,NUGGET SALAM 500GR,Nugget,19000,20,Pack,SKW00046,5,Aktif
-SKW00047,NUGGET SALAM STIK 500GR,Nugget,19000,20,Pack,SKW00047,5,Aktif
-SKW00048,NUGGET SALAM 1KG,Nugget,34000,20,Pack,SKW00048,5,Aktif
-SKW00049,NUGGET SO NICE 250GR,Nugget,13000,20,Pack,SKW00049,5,Aktif
-SKW00050,NUGGET KANZLER 120GR,Nugget,14000,20,Pack,SKW00050,5,Aktif
-SKW00051,NUGGET SO ECO 500GR,Nugget,18000,20,Pack,SKW00051,5,Aktif
-SKW00052,NUGGET SO ECO 1KG,Nugget,32000,20,Pack,SKW00052,5,Aktif
-SKW00053,NUGGET KANZLER STIK 450GR,Nugget,40000,20,Pack,SKW00053,5,Aktif
-SKW00054,NUGGET KANZLER SPICY 450GR,Nugget,44000,20,Pack,SKW00054,5,Aktif
-SKW00055,NUGGET KANZLER CRISPY 450GR,Nugget,40000,20,Pack,SKW00055,5,Aktif
-SKW00056,NUGGET BELFOODS CRUNCHY,Nugget,12500,20,Pack,SKW00056,5,Aktif
-SKW00057,NUGGET SAM'S 250GR,Nugget,11000,20,Pack,SKW00057,5,Aktif
-SKW00058,NUGGET HEMATO 500GR,Nugget,20000,20,Pack,SKW00058,5,Aktif
-SKW00059,MIX VEGETABLE 1KG,Frozen Food,27000,20,Pack,SKW00059,5,Aktif
-SKW00060,POLONG MECAKO 500GR,Frozen Food,19000,20,Pack,SKW00060,5,Aktif
-SKW00061,KORNET NGETOP,Frozen Food,18500,20,Pack,SKW00061,5,Aktif
-SKW00062,KORNET UMIAMI AYAM,Frozen Food,17000,20,Pack,SKW00062,5,Aktif
-SKW00063,KORNET UMIAMI SAPI,Frozen Food,17000,20,Pack,SKW00063,5,Aktif
-SKW00064,KORNET SALAM,Frozen Food,16000,20,Pack,SKW00064,5,Aktif
-SKW00065,BEEF VITALIA,Daging,10000,20,Pack,SKW00065,5,Aktif
-SKW00066,BEEF PREMIUM TANPA LEMAK 500GR,Daging,57000,20,Pack,SKW00066,5,Aktif
-SKW00067,FILLET DADA AYAM 500GR,Daging,25000,20,Pack,SKW00067,5,Aktif
-SKW00068,BEEF DAILY MEAT 500GR (1PCS),Daging,42000,20,Pack,SKW00068,5,Aktif
-SKW00069,BEEF DAILY MEAT 500GR (3PCS),Daging,41000,20,Pack,SKW00069,5,Aktif
-SKW00070,BEEF DAILY MEAT 500GR (5PCS),Daging,40000,20,Pack,SKW00070,5,Aktif
-SKW00071,KULIT LUMPIA FINNA,Kulit Lumpia & Dimsum,11500,20,Pack,SKW00071,5,Aktif
-SKW00072,KULIT DIMSUM DIAMETER 8CM,Kulit Lumpia & Dimsum,9000,20,Pack,SKW00072,5,Aktif
-SKW00073,KULIT DIMSUM DIAMETER 10CM,Kulit Lumpia & Dimsum,10000,20,Pack,SKW00073,5,Aktif
-SKW00074,KULIT LUMPIA BULAT,Kulit Lumpia & Dimsum,10000,20,Pack,SKW00074,5,Aktif
-SKW00075,SHIFUDO DUMPLING KEJU 500GR,Dumpling,28000,20,Pack,SKW00075,5,Aktif
-SKW00076,SHIFUDO DUMPLING AYAM 500GR,Dumpling,28000,20,Pack,SKW00076,5,Aktif
-SKW00077,SHIFUDO CHIKUWA MINI 500GR,Seafood Frozen,28000,20,Pack,SKW00077,5,Aktif
-SKW00078,SHIFUDO CUMI FLOWER 500GR,Seafood Frozen,30000,20,Pack,SKW00078,5,Aktif
-SKW00079,SHIFUDO OTAK-OTAK 500GR,Seafood Frozen,23000,20,Pack,SKW00079,5,Aktif
-SKW00080,SHIFUDO FISH CAKE 500GR,Seafood Frozen,25000,20,Pack,SKW00080,5,Aktif
-SKW00081,SHIFUDO FISH ROLL 500GR,Seafood Frozen,24000,20,Pack,SKW00081,5,Aktif
-SKW00082,SUNFISH CHIKUWA 500GR,Seafood Frozen,28000,20,Pack,SKW00082,5,Aktif
-SKW00083,INDOMINA KAKI NAGA 500GR,Seafood Frozen,16000,20,Pack,SKW00083,5,Aktif
-SKW00084,INDOMINA CHEESE DUMPLING 500GR,Dumpling,25500,20,Pack,SKW00084,5,Aktif
-SKW00085,INDOMINA TWOWISTER 500GR,Seafood Frozen,23000,20,Pack,SKW00085,5,Aktif
-SKW00086,INDOMINA STIK KEPITING 500GR,Seafood Frozen,22500,20,Pack,SKW00086,5,Aktif
-SKW00087,INDOMINA SOSIS SALJU 500GR,Sosis,18000,20,Pack,SKW00087,5,Aktif
-SKW00088,CEDEA DUMPLING AYAM 200GR,Dumpling,15000,20,Pack,SKW00088,5,Aktif
-SKW00089,CEDEA DUMPLING KEJU 200GR,Dumpling,15000,20,Pack,SKW00089,5,Aktif
-SKW00090,CEDEA DUMPLING AYAM 500GR,Dumpling,29000,20,Pack,SKW00090,5,Aktif
-SKW00091,CEDEA DUMPLING KEJU 500GR,Dumpling,29000,20,Pack,SKW00091,5,Aktif
-SKW00092,CEDEA CRABSTICK 250GR,Seafood Frozen,17000,20,Pack,SKW00092,5,Aktif
-SKW00093,CEDEA CRABSTICK 1KG,Seafood Frozen,51000,20,Pack,SKW00093,5,Aktif
-SKW00094,CEDEA FISH BALL 1KG,Seafood Frozen,50000,20,Pack,SKW00094,5,Aktif
-SKW00095,CEDEA CHIKUWA 1KG,Seafood Frozen,56000,20,Pack,SKW00095,5,Aktif
-SKW00096,KENTANG 2KG,Frozen Food,60000,20,Pack,SKW00096,5,Aktif
-SKW00097,KENTANG 1KG,Frozen Food,30000,20,Pack,SKW00097,5,Aktif
-SKW00098,KENTANG 500GR,Frozen Food,19000,20,Pack,SKW00098,5,Aktif
-SKW00099,GO OTAK-OTAK,Olahan Ikan,14000,20,Pack,SKW00099,5,Aktif
-SKW00100,GO BAKSO IKAN,Olahan Ikan,13000,20,Pack,SKW00100,5,Aktif
-SKW00101,GO SCALLOP,Olahan Ikan,14000,20,Pack,SKW00101,5,Aktif
-SKW00102,ILM ODENG,Olahan Ikan,21000,20,Pack,SKW00102,5,Aktif
-SKW00103,ILM SUKOI,Olahan Ikan,14000,20,Pack,SKW00103,5,Aktif
-SKW00104,ILM IKAN OLAHAN TEMPURA,Olahan Ikan,14000,20,Pack,SKW00104,5,Aktif
-SKW00105,ILM BURGER,Olahan Ikan,14000,20,Pack,SKW00105,5,Aktif
-SKW00106,ILM BINTANG,Olahan Ikan,14000,20,Pack,SKW00106,5,Aktif
-SKW00107,ILM SCALLOP,Olahan Ikan,14000,20,Pack,SKW00107,5,Aktif
-SKW00108,MINIPAO,Roti & Donat,14000,20,Pack,SKW00108,5,Aktif
-SKW00109,ROTI MARYAM ALIBABA,Roti & Donat,14000,20,Pack,SKW00109,5,Aktif
-SKW00110,ROTI MARYAM SYA'BAN ORI,Roti & Donat,20000,20,Pack,SKW00110,5,Aktif
-SKW00111,ROTI MARYAM MC,Roti & Donat,14000,20,Pack,SKW00111,5,Aktif
-SKW00112,DONAT KENTANG MOLALI,Roti & Donat,20000,20,Pack,SKW00112,5,Aktif
-SKW00113,DONAT CRISPY,Roti & Donat,16000,20,Pack,SKW00113,5,Aktif
-SKW00114,DONAT MINI MC,Roti & Donat,14000,20,Pack,SKW00114,5,Aktif
+ID,SKU,Name,Category,Price,Stock,Unit,Sheet,SheetNo
+prod-skw-00001,SKW00001,Nanas,Buah,7000,20,Pcs,Sheet1,1
+prod-skw-00002,SKW00002,Tahu,Sayur,3000,20,Pcs,Sheet1,2
+prod-skw-00003,SKW00003,Tahu Bumbu Kotak,Sayur,7000,20,Pcs,Sheet1,3
+prod-skw-00004,SKW00004,Tahu Bumbu Plastik,Sayur,3000,20,Pcs,Sheet1,4
+prod-skw-00005,SKW00005,Tempe,Sayur,3000,20,Pcs,Sheet1,5
+prod-skw-00006,SKW00006,Labu Kuning,Sayur,0,20,Pcs,Sheet1,6
+prod-skw-00007,SKW00007,Andewi,Sayur,0,20,Pcs,Sheet1,7
+prod-skw-00008,SKW00008,Brokoli,Sayur,0,20,Pcs,Sheet1,8
+prod-skw-00009,SKW00009,Ubi Cilembu,Sayur,0,20,Pcs,Sheet1,9
+prod-skw-00010,SKW00010,Jamur Tiram,Sayur,5500,20,Pcs,Sheet1,10
+prod-skw-00011,SKW00011,Jamur Kuping,Sayur,4000,20,Pcs,Sheet1,11
+prod-skw-00012,SKW00012,Baby Corn,Sayur,0,20,Pcs,Sheet1,12
+prod-skw-00013,SKW00013,Enoki,Sayur,5000,20,Pcs,Sheet1,13
+prod-skw-00014,SKW00014,Tahu Coklat,Sayur,0,20,Pcs,Sheet1,14
+prod-skw-00015,SKW00015,Cambah,Sayur,2000,20,Pcs,Sheet1,15
+prod-skw-00016,SKW00016,Sop,Sayur,3000,20,Pcs,Sheet1,16
+prod-skw-00017,SKW00017,Capjay,Sayur,4000,20,Pcs,Sheet1,17
+prod-skw-00018,SKW00018,Aseman,Sayur,2000,20,Pcs,Sheet1,18
+prod-skw-00019,SKW00019,Kacang Panjang,Sayur,2000,20,Pcs,Sheet1,19
+prod-skw-00020,SKW00020,Jagung,Sayur,0,20,Pcs,Sheet1,20
+prod-skw-00021,SKW00021,Wortel,Sayur,0,20,Pcs,Sheet1,21
+prod-skw-00022,SKW00022,Buncis,Sayur,0,20,Pcs,Sheet1,22
+prod-skw-00023,SKW00023,Kentang Kupas,Sayur,0,20,Pcs,Sheet1,23
+prod-skw-00024,SKW00024,Manisa Iris,Sayur,0,20,Pcs,Sheet1,24
+prod-skw-00025,SKW00025,Manisa,Sayur,0,20,Pcs,Sheet1,25
+prod-skw-00026,SKW00026,Cabe Besar,Bumbu Dapur,3000,20,Pcs,Sheet1,26
+prod-skw-00027,SKW00027,Cabe Kriting,Bumbu Dapur,3000,20,Pcs,Sheet1,27
+prod-skw-00028,SKW00028,Daun Pre,Sayur,2000,20,Pcs,Sheet1,28
+prod-skw-00029,SKW00029,Daun Seledri,Sayur,1000,20,Pcs,Sheet1,29
+prod-skw-00030,SKW00030,Gambas,Sayur,0,20,Pcs,Sheet1,30
+prod-skw-00031,SKW00031,Pare,Sayur,0,20,Pcs,Sheet1,31
+prod-skw-00032,SKW00032,Kangkung,Sayur,2000,20,Pcs,Sheet1,32
+prod-skw-00033,SKW00033,Bayam,Sayur,2000,20,Pcs,Sheet1,33
+prod-skw-00034,SKW00034,Sawi Ijo,Sayur,0,20,Pcs,Sheet1,34
+prod-skw-00035,SKW00035,Sawi Putih,Sayur,0,20,Pcs,Sheet1,35
+prod-skw-00036,SKW00036,Pakcoy,Sayur,0,20,Pcs,Sheet1,36
+prod-skw-00037,SKW00037,Kemangi,Sayur,2500,20,Pcs,Sheet1,37
+prod-skw-00038,SKW00038,Kecipir,Sayur,0,20,Pcs,Sheet1,38
+prod-skw-00039,SKW00039,Bawang Merah,Bumbu Dapur,3000,20,Pcs,Sheet1,39
+prod-skw-00040,SKW00040,Bawang Putih,Bumbu Dapur,3000,20,Pcs,Sheet1,40
+prod-skw-00041,SKW00041,Cabe Rawit,Bumbu Dapur,3000,20,Pcs,Sheet1,41
+prod-skw-00042,SKW00042,Cabe Lalap,Bumbu Dapur,2000,20,Pcs,Sheet1,42
+prod-skw-00043,SKW00043,Bumbu Lengkap,Bumbu Dapur,3000,20,Pcs,Sheet1,43
+prod-skw-00044,SKW00044,Terong Lalap,Sayur,0,20,Pcs,Sheet1,44
+prod-skw-00045,SKW00045,Terong Ungu,Sayur,0,20,Pcs,Sheet1,45
+prod-skw-00046,SKW00046,Terong Hijau,Sayur,0,20,Pcs,Sheet1,46
+prod-skw-00047,SKW00047,Timun,Sayur,0,20,Pcs,Sheet1,47
+prod-skw-00048,SKW00048,Sereh,Bumbu Dapur,1000,20,Pcs,Sheet1,48
+prod-skw-00049,SKW00049,Daun Jeruk,Bumbu Dapur,500,20,Pcs,Sheet1,49
+prod-skw-00050,SKW00050,Daun Salam,Bumbu Dapur,500,20,Pcs,Sheet1,50
+prod-skw-00051,SKW00051,Jeruk Nipis,Buah,2000,20,Pcs,Sheet1,51
+prod-skw-00052,SKW00052,Jeruk Sambel,Buah,2000,20,Pcs,Sheet1,52
+prod-skw-00053,SKW00053,Bombay,Bumbu Dapur,0,20,Pcs,Sheet1,53
+prod-skw-00054,SKW00054,Kentang Kulit,Sayur,0,20,Pcs,Sheet1,54
+prod-skw-00055,SKW00055,Jahe,Bumbu Dapur,0,20,Pcs,Sheet1,55
+prod-skw-00056,SKW00056,Kunyit,Bumbu Dapur,0,20,Pcs,Sheet1,56
+prod-skw-00057,SKW00057,Laos,Bumbu Dapur,0,20,Pcs,Sheet1,57
+prod-skw-00058,SKW00058,Telur 1/4,Sembako,7000,20,Kg,Sheet1,58
+prod-skw-00059,SKW00059,Telur 1/2,Sembako,13500,20,Kg,Sheet1,59
+prod-skw-00060,SKW00060,Telur 1 Kg,Sembako,27000,20,Kg,Sheet1,60
+prod-skw-00061,SKW00061,Telur Asin,Sembako,5000,20,Pcs,Sheet1,61
+prod-skw-00062,SKW00062,Telur Puyuh 1/4,Sembako,10000,20,Kg,Sheet1,62
+prod-skw-00063,SKW00063,Tomat,Buah,0,20,Pcs,Sheet1,63
+prod-skw-00064,SKW00064,Jeruk Lemon,Buah,0,20,Pcs,Sheet1,64
+prod-skw-00065,SKW00065,Kemiri,Bumbu Dapur,1000,20,Pcs,Sheet1,65
+prod-skw-00066,SKW00066,Biji Pala,Bumbu Dapur,2000,20,Pcs,Sheet1,66
+prod-skw-00067,SKW00067,Cengkeh,Bumbu Dapur,1000,20,Pcs,Sheet1,67
+prod-skw-00068,SKW00068,Biji Lada,Bumbu Dapur,1000,20,Pcs,Sheet1,68
+prod-skw-00069,SKW00069,Biji Ketumbar,Bumbu Dapur,1000,20,Pcs,Sheet1,69
+prod-skw-00070,SKW00070,Jinten,Bumbu Dapur,1000,20,Pcs,Sheet1,70
+prod-skw-00071,SKW00071,Kapulaga,Bumbu Dapur,1000,20,Pcs,Sheet1,71
+prod-skw-00072,SKW00072,Asem Jawa,Bumbu Dapur,1000,20,Pcs,Sheet1,72
+prod-skw-00073,SKW00073,Kacang Goreng,Sembako,2000,20,Pcs,Sheet1,73
+prod-skw-00074,SKW00074,Ikan Asin,Sayur,5000,20,Pcs,Sheet1,74
+prod-skw-00075,SKW00075,Pokak,Bumbu Dapur,0,20,Pcs,Sheet1,75
+prod-skw-00076,SKW00076,Masako Ayam Kcl,Bumbu Dapur,500,20,Pcs,Sheet1,76
+prod-skw-00077,SKW00077,Masako Sapi Kcl,Bumbu Dapur,500,20,Pcs,Sheet1,77
+prod-skw-00078,SKW00078,Masako Ayam,Bumbu Dapur,5500,20,Pcs,Sheet1,78
+prod-skw-00079,SKW00079,Masako Sapi,Bumbu Dapur,5500,20,Pcs,Sheet1,79
+prod-skw-00080,SKW00080,Racik Nasi Goreng,Bumbu Dapur,2000,20,Pcs,Sheet1,80
+prod-skw-00081,SKW00081,Racik Sayur Asem,Bumbu Dapur,2000,20,Pcs,Sheet1,81
+prod-skw-00082,SKW00082,Racik Sayur Sop,Bumbu Dapur,2000,20,Pcs,Sheet1,82
+prod-skw-00083,SKW00083,Racik Tahu Tempe,Bumbu Dapur,2000,20,Pcs,Sheet1,83
+prod-skw-00084,SKW00084,Racik Ikan Goreng,Bumbu Dapur,2000,20,Pcs,Sheet1,84
+prod-skw-00085,SKW00085,Racik Ayam Goreng,Bumbu Dapur,2000,20,Pcs,Sheet1,85
+prod-skw-00086,SKW00086,Racik Ayam Goreng Rempah,Bumbu Dapur,2000,20,Pcs,Sheet1,86
+prod-skw-00087,SKW00087,Sasa Bumbu Kalasan,Bumbu Dapur,2500,20,Pcs,Sheet1,87
+prod-skw-00088,SKW00088,Sasa Bumbu Ayam Kuning,Bumbu Dapur,2500,20,Pcs,Sheet1,88
+prod-skw-00089,SKW00089,Sasa Bumbu Lumur,Bumbu Dapur,2500,20,Pcs,Sheet1,89
+prod-skw-00090,SKW00090,Kobe Ayam Kalasan,Bumbu Dapur,2500,20,Pcs,Sheet1,90
+prod-skw-00091,SKW00091,Kobe Ayam Lengkuas,Bumbu Dapur,2500,20,Pcs,Sheet1,91
+prod-skw-00092,SKW00092,Kobe Opor,Bumbu Dapur,2500,20,Pcs,Sheet1,92
+prod-skw-00093,SKW00093,Kobe Soto,Bumbu Dapur,2500,20,Pcs,Sheet1,93
+prod-skw-00094,SKW00094,Desaku Balado,Bumbu Dapur,3500,20,Pcs,Sheet1,94
+prod-skw-00095,SKW00095,Desaku Opor,Bumbu Dapur,3500,20,Pcs,Sheet1,95
+prod-skw-00096,SKW00096,Desaku Kari,Bumbu Dapur,3500,20,Pcs,Sheet1,96
+prod-skw-00097,SKW00097,Kaldu Jamur Wangs Sachet,Bumbu Dapur,1000,20,Pcs,Sheet1,97
+prod-skw-00098,SKW00098,Kaldu Jamur 2000an Sachet,Bumbu Dapur,2000,20,Pcs,Sheet1,98
+prod-skw-00099,SKW00099,Royco Sapi Sachet,Bumbu Dapur,500,20,Pcs,Sheet1,99
+prod-skw-00100,SKW00100,Royco Ayam Sachet,Bumbu Dapur,500,20,Pcs,Sheet1,100
+prod-skw-00101,SKW00101,Royco Sapi 250gr,Bumbu Dapur,0,20,Pcs,Sheet1,101
+prod-skw-00102,SKW00102,Royco Sapi 100gr,Bumbu Dapur,0,20,Pcs,Sheet1,102
+prod-skw-00103,SKW00103,Royco Ayam 100gr,Bumbu Dapur,0,20,Pcs,Sheet1,103
+prod-skw-00104,SKW00104,Extrajoss,Minuman,1500,20,Pcs,Sheet1,104
+prod-skw-00105,SKW00105,Magic Lezat Sachet,Bumbu Dapur,2000,20,Pcs,Sheet1,105
+prod-skw-00106,SKW00106,Kobe Nasi Kuning,Bumbu Dapur,2000,20,Pcs,Sheet1,106
+prod-skw-00107,SKW00107,Kobe Nasi Uduk,Bumbu Dapur,2000,20,Pcs,Sheet1,107
+prod-skw-00108,SKW00108,Kobe Nasi Bebek,Bumbu Dapur,2000,20,Pcs,Sheet1,108
+prod-skw-00109,SKW00109,Kobe Bumbu Rendang,Bumbu Dapur,2000,20,Pcs,Sheet1,109
+prod-skw-00110,SKW00110,Top Kopi Susu,Minuman,2000,20,Pcs,Sheet1,110
+prod-skw-00111,SKW00111,Top Kopi Gula,Minuman,2000,20,Pcs,Sheet1,111
+prod-skw-00112,SKW00112,Luwak White Coffee,Minuman,2000,20,Pcs,Sheet1,112
+prod-skw-00113,SKW00113,Indomilk SKM Putih,Sembako,0,20,Pcs,Sheet1,113
+prod-skw-00114,SKW00114,Indomilk SKM Coklat,Sembako,0,20,Pcs,Sheet1,114
+prod-skw-00115,SKW00115,Bamboe Kare,Bumbu Dapur,8000,20,Pcs,Sheet1,115
+prod-skw-00116,SKW00116,Bamboe Soto Ayam,Bumbu Dapur,8000,20,Pcs,Sheet1,116
+prod-skw-00117,SKW00117,Bamboe Opor,Bumbu Dapur,8000,20,Pcs,Sheet1,117
+prod-skw-00118,SKW00118,Bamboe Gule,Bumbu Dapur,8000,20,Pcs,Sheet1,118
+prod-skw-00119,SKW00119,Bamboe Rendang,Bumbu Dapur,8000,20,Pcs,Sheet1,119
+prod-skw-00120,SKW00120,Bamboe Nasi Uduk,Bumbu Dapur,8000,20,Pcs,Sheet1,120
+prod-skw-00121,SKW00121,Bamboe Rawon,Bumbu Dapur,8000,20,Pcs,Sheet1,121
+prod-skw-00122,SKW00122,Bamboe Tomyum,Bumbu Dapur,8000,20,Pcs,Sheet1,122
+prod-skw-00123,SKW00123,Bamboe Semur,Bumbu Dapur,8000,20,Pcs,Sheet1,123
+prod-skw-00124,SKW00124,Bamboe Soto Daging,Bumbu Dapur,8000,20,Pcs,Sheet1,124
+prod-skw-00125,SKW00125,Bamboe Ayam Kecap,Bumbu Dapur,8000,20,Pcs,Sheet1,125
+prod-skw-00126,SKW00126,Bamboe Krengsengan,Bumbu Dapur,8000,20,Pcs,Sheet1,126
+prod-skw-00127,SKW00127,Bamboe Balado,Bumbu Dapur,8000,20,Pcs,Sheet1,127
+prod-skw-00128,SKW00128,Bamboe Bumbu Rujak,Bumbu Dapur,8000,20,Pcs,Sheet1,128
+prod-skw-00129,SKW00129,Bamboe Bali,Bumbu Dapur,8000,20,Pcs,Sheet1,129
+prod-skw-00130,SKW00130,Bamboe Saus Asam Manis,Bumbu Dapur,8000,20,Pcs,Sheet1,130
+prod-skw-00131,SKW00131,Bamboe Sambal Goreng,Bumbu Dapur,8000,20,Pcs,Sheet1,131
+prod-skw-00132,SKW00132,Bumbu Basah Hidayah,Bumbu Dapur,2500,20,Pcs,Sheet1,132
+prod-skw-00133,SKW00133,Santan Sun Kara Cair 65ml,Sembako,6000,20,Pcs,Sheet1,133
+prod-skw-00134,SKW00134,Santan Sasa Cair 65ml,Sembako,5000,20,Pcs,Sheet1,134
+prod-skw-00135,SKW00135,Kecap Sedap 77gr,Bumbu Dapur,2000,20,Pcs,Sheet1,135
+prod-skw-00136,SKW00136,Kecap Bango Sachet,Bumbu Dapur,1000,20,Pcs,Sheet1,136
+prod-skw-00137,SKW00137,Kecap Bango 77gr,Bumbu Dapur,3000,20,Pcs,Sheet1,137
+prod-skw-00138,SKW00138,Kecap Sedap Tanggung 250gr,Bumbu Dapur,9500,20,Pcs,Sheet1,138
+prod-skw-00139,SKW00139,Kecap Bango Tanggung 265gr,Bumbu Dapur,10500,20,Pcs,Sheet1,139
+prod-skw-00140,SKW00140,Garam Kapal,Sembako,3000,20,Pcs,Sheet1,140
+prod-skw-00141,SKW00141,Mentega Amanda 250gr,Sembako,6000,20,Pcs,Sheet1,141
+prod-skw-00142,SKW00142,Mentega Forvita,Sembako,7000,20,Pcs,Sheet1,142
+prod-skw-00143,SKW00143,Mentega Filma,Sembako,7000,20,Pcs,Sheet1,143
+prod-skw-00144,SKW00144,Sunlight 210ml,Kebutuhan Rumah,5000,20,Pcs,Sheet1,144
+prod-skw-00145,SKW00145,Sunlight 90ml,Kebutuhan Rumah,2000,20,Pcs,Sheet1,145
+prod-skw-00146,SKW00146,Terigu Polos 250gr,Sembako,3000,20,Pcs,Sheet1,146
+prod-skw-00147,SKW00147,Terigu Polos 500gr,Sembako,6000,20,Pcs,Sheet1,147
+prod-skw-00148,SKW00148,Terigu Polos 1kg,Sembako,12000,20,Pcs,Sheet1,148
+prod-skw-00149,SKW00149,Tepung Segitiga Biru 500gr,Sembako,6500,20,Pcs,Sheet1,149
+prod-skw-00150,SKW00150,Tepung Segitiga Biru 1kg,Sembako,0,20,Pcs,Sheet1,150
+prod-skw-00151,SKW00151,Tepung Cakra Kembar 1kg,Sembako,15000,20,Pcs,Sheet1,151
+prod-skw-00152,SKW00152,Tepung Segitiga Biru Polos 1kg,Sembako,0,20,Pcs,Sheet1,152
+prod-skw-00153,SKW00153,Baking Powder,Sembako,2500,20,Pcs,Sheet1,153
+prod-skw-00154,SKW00154,Soda Kue,Sembako,2500,20,Pcs,Sheet1,154
+prod-skw-00155,SKW00155,Gula Pasir 250gr,Sembako,5000,20,Pcs,Sheet1,155
+prod-skw-00156,SKW00156,Gula Pasir 500gr,Sembako,9000,20,Pcs,Sheet1,156
+prod-skw-00157,SKW00157,Gula Pasir 1kg,Sembako,18000,20,Pcs,Sheet1,157
+prod-skw-00158,SKW00158,Gula Merah Sachet,Sembako,1000,20,Pcs,Sheet1,158
+prod-skw-00159,SKW00159,Gula Merah 250gr,Sembako,5500,20,Pcs,Sheet1,159
+prod-skw-00160,SKW00160,Beras Kecombrang 1kg,Sembako,77000,20,Pcs,Sheet1,160
+prod-skw-00161,SKW00161,Tusuk Sate,Kebutuhan Rumah,5000,20,Pcs,Sheet1,161
+prod-skw-00162,SKW00162,Wipol 190gr,Kebutuhan Rumah,0,20,Pcs,Sheet1,162
+prod-skw-00163,SKW00163,Detergen Daia 190gr,Kebutuhan Rumah,0,20,Pcs,Sheet1,163
+prod-skw-00164,SKW00164,Detergen Attack 200gr,Kebutuhan Rumah,0,20,Pcs,Sheet1,164
+prod-skw-00165,SKW00165,Lifebuoy Cair 85gr,Kebutuhan Rumah,0,20,Pcs,Sheet1,165
+prod-skw-00166,SKW00166,Giv Body Wash 60ml,Kebutuhan Rumah,0,20,Pcs,Sheet1,166
+prod-skw-00167,SKW00167,Sajiku Capcay,Bumbu Dapur,2500,20,Pcs,Sheet1,167
+prod-skw-00168,SKW00168,Sajiku Sop,Bumbu Dapur,2500,20,Pcs,Sheet1,168
+prod-skw-00169,SKW00169,Sajiku Ayam Goreng,Bumbu Dapur,2500,20,Pcs,Sheet1,169
+prod-skw-00170,SKW00170,Sajiku Nasi Goreng,Bumbu Dapur,2500,20,Pcs,Sheet1,170
+prod-skw-00171,SKW00171,Mamasuka Kuah Bakso,Bumbu Dapur,500,20,Pcs,Sheet1,171
+prod-skw-00172,SKW00172,Mamasuka Sop,Bumbu Dapur,500,20,Pcs,Sheet1,172
+prod-skw-00173,SKW00173,Tepung Sajiku Serbaguna 210gr,Sembako,7000,20,Pcs,Sheet1,173
+prod-skw-00174,SKW00174,Tepung Sasa Serbaguna Ori 210gr,Sembako,6500,20,Pcs,Sheet1,174
+prod-skw-00175,SKW00175,Tepung Sasa Serbaguna Hot 210gr,Sembako,6500,20,Pcs,Sheet1,175
+prod-skw-00176,SKW00176,Tepung Sasa Kentucky 210gr,Sembako,6500,20,Pcs,Sheet1,176
+prod-skw-00177,SKW00177,Tepung Kobe Kentucky 200gr,Sembako,7000,20,Pcs,Sheet1,177
+prod-skw-00178,SKW00178,Tepung Kobe Kentucky 200gr,Sembako,7000,20,Pcs,Sheet1,178
+prod-skw-00179,SKW00179,Tepung Sajiku Serbaguna 40gr,Sembako,2000,20,Pcs,Sheet1,179
+prod-skw-00180,SKW00180,Tepung Kobe Kentucky 70gr,Sembako,3000,20,Pcs,Sheet1,180
+prod-skw-00181,SKW00181,Tepung Sasa Serbaguna Ori 70gr,Sembako,3000,20,Pcs,Sheet1,181
+prod-skw-00182,SKW00182,Tepung Sasa Serbaguna Hot 70gr,Sembako,3000,20,Pcs,Sheet1,182
+prod-skw-00183,SKW00183,Tepung Sasa Kentucky 70gr,Sembako,3000,20,Pcs,Sheet1,183
+prod-skw-00184,SKW00184,Tepung Sasa Pisang 70gr,Sembako,3000,20,Pcs,Sheet1,184
+prod-skw-00185,SKW00185,Tepung Sasa Bakwan 70gr,Sembako,3000,20,Pcs,Sheet1,185
+prod-skw-00186,SKW00186,Tepung Sasa Pisang 210gr,Sembako,6500,20,Pcs,Sheet1,186
+prod-skw-00187,SKW00187,Tepung Sasa Bakwan 210gr,Sembako,6500,20,Pcs,Sheet1,187
+prod-skw-00188,SKW00188,Tepung Panir Sakti 200gr,Sembako,5500,20,Pcs,Sheet1,188
+prod-skw-00189,SKW00189,Tepung Maizena,Sembako,6000,20,Pcs,Sheet1,189
+prod-skw-00190,SKW00190,Cuka Kecil,Bumbu Dapur,3000,20,Pcs,Sheet1,190
+prod-skw-00191,SKW00191,Kecap Manis ABC Botol,Bumbu Dapur,0,20,Pcs,Sheet1,191
+prod-skw-00192,SKW00192,Kecap Manis Bango Botol,Bumbu Dapur,0,20,Pcs,Sheet1,192
+prod-skw-00193,SKW00193,Kecap Manis Sedap Botol,Bumbu Dapur,0,20,Pcs,Sheet1,193
+prod-skw-00194,SKW00194,Kecap Asin ABC Botol,Bumbu Dapur,6500,20,Pcs,Sheet1,194
+prod-skw-00195,SKW00195,Saori Saus Tiram Botol,Bumbu Dapur,11000,20,Pcs,Sheet1,195
+prod-skw-00196,SKW00196,Saori Saus Teriyaki Botol,Bumbu Dapur,11000,20,Pcs,Sheet1,196
+prod-skw-00197,SKW00197,Minyak Wijen Botol,Bumbu Dapur,7000,20,Pcs,Sheet1,197
+prod-skw-00198,SKW00198,Saos Raja Rasa Botol,Bumbu Dapur,0,20,Pcs,Sheet1,198
+prod-skw-00199,SKW00199,Indofood Saos Tomat Botol,Bumbu Dapur,6500,20,Pcs,Sheet1,199
+prod-skw-00200,SKW00200,Indofood Saos Pedas Botol,Bumbu Dapur,8000,20,Pcs,Sheet1,200
+prod-skw-00201,SKW00201,Indofood Saos Pedas Manis Botol,Bumbu Dapur,8000,20,Pcs,Sheet1,201
+prod-skw-00202,SKW00202,Indofood Saos Bangkok Botol,Bumbu Dapur,8500,20,Pcs,Sheet1,202
+prod-skw-00203,SKW00203,Indofood Saos Extra Pedas Botol,Bumbu Dapur,8000,20,Pcs,Sheet1,203
+prod-skw-00204,SKW00204,Soun RRT Kecil,Sembako,2500,20,Pcs,Sheet1,204
+prod-skw-00205,SKW00205,Soun Golok Biru,Sembako,5500,20,Pcs,Sheet1,205
+prod-skw-00206,SKW00206,Soun Serimpi Putih,Sembako,0,20,Pcs,Sheet1,206
+prod-skw-00207,SKW00207,Ekomie Merah Kecil,Sembako,3000,20,Pcs,Sheet1,207
+prod-skw-00208,SKW00208,Ekomie Besar,Sembako,11000,20,Pcs,Sheet1,208
+prod-skw-00209,SKW00209,Mie Kenduri,Sembako,0,20,Pcs,Sheet1,209
+prod-skw-00210,SKW00210,Mie Sedaap Goreng,Sembako,3500,20,Pcs,Sheet1,210
+prod-skw-00211,SKW00211,Mie Sedaap Laksa Singapore,Sembako,3500,20,Pcs,Sheet1,211
+prod-skw-00212,SKW00212,Mie Sedap Soto,Sembako,3500,20,Pcs,Sheet1,212
+prod-skw-00213,SKW00213,Mie Sedaap Kari Spesial,Sembako,3500,20,Pcs,Sheet1,213
+prod-skw-00214,SKW00214,Indomie Goreng,Sembako,3500,20,Pcs,Sheet1,214
+prod-skw-00215,SKW00215,Indomie Geprek,Sembako,3500,20,Pcs,Sheet1,215
+prod-skw-00216,SKW00216,Indomie Aceh,Sembako,3500,20,Pcs,Sheet1,216
+prod-skw-00217,SKW00217,Indomie Ayam Bawang,Sembako,3500,20,Pcs,Sheet1,217
+prod-skw-00218,SKW00218,Indomie Kaldu Ayam,Sembako,3500,20,Pcs,Sheet1,218
+prod-skw-00219,SKW00219,Indomie Soto,Sembako,3500,20,Pcs,Sheet1,219
+prod-skw-00220,SKW00220,Indomie Rendang,Sembako,3500,20,Pcs,Sheet1,220
+prod-skw-00221,SKW00221,Indomie Kriuk,Sembako,3500,20,Pcs,Sheet1,221
+prod-skw-00222,SKW00222,Mie Burung Dara Pipih,Sembako,4000,20,Pcs,Sheet1,222
+prod-skw-00223,SKW00223,Mie Burung Dara Keriting,Sembako,4000,20,Pcs,Sheet1,223
+prod-skw-00224,SKW00224,Padamu Bihun Kuning,Sembako,4500,20,Pcs,Sheet1,224
+prod-skw-00225,SKW00225,Padamu Bihun Merah,Sembako,8000,20,Pcs,Sheet1,225
+prod-skw-00226,SKW00226,Sarden ABC Tomat,Sembako,13000,20,Pcs,Sheet1,226
+prod-skw-00227,SKW00227,Sarden ABC Pedas,Sembako,13000,20,Pcs,Sheet1,227
+prod-skw-00228,SKW00228,Sarden Asahi Tomat,Sembako,10000,20,Pcs,Sheet1,228
+prod-skw-00229,SKW00229,Sarden Asahi Pedas,Sembako,10000,20,Pcs,Sheet1,229
+prod-skw-00230,SKW00230,Minyak Fraiswell 500ml,Sembako,13000,20,Pcs,Sheet1,230
+prod-skw-00231,SKW00231,Minyak Kita Refill 1000ml,Sembako,21000,20,Pcs,Sheet1,231
+prod-skw-00232,SKW00232,Minyak Rizki 800ml,Sembako,19000,20,Pcs,Sheet1,232
+prod-skw-00233,SKW00233,Minyak Sunco 1000ml,Sembako,0,20,Pcs,Sheet1,233
+prod-skw-00234,SKW00234,Minyak Sunco 2000ml,Sembako,0,20,Pcs,Sheet1,234
+prod-skw-00235,SKW00235,Minyak Gelas,Sembako,6000,20,Pcs,Sheet1,235
+prod-skw-00236,SKW00236,Minyak Botol Kecil,Sembako,0,20,Pcs,Sheet1,236
+prod-skw-00237,SKW00237,Tempe Mekar Jaya,Sayur,3000,20,Pcs,Sheet1,237
+prod-skw-00238,SKW00238,Tahu Sutra Plastik,Sayur,3000,20,Pcs,Sheet1,238
+prod-skw-00239,SKW00239,Tahu Sutra Kotak,Sayur,7000,20,Pcs,Sheet1,239
+prod-skw-00240,SKW00240,Tahu,Sayur,3000,20,Pcs,Sheet1,240
+prod-skw-00241,SKW00241,Jamur Putih,Sayur,5500,20,Pcs,Sheet1,241
+prod-skw-00242,SKW00242,Jamur Kuping,Sayur,4000,20,Pcs,Sheet1,242
+prod-skw-00243,SKW00243,Jamur Kancing,Sayur,0,20,Pcs,Sheet1,243
+prod-skw-00244,SKW00244,Paprika,Sayur,0,20,Pcs,Sheet1,244
+prod-skw-00245,SKW00245,Jagung,Sayur,0,20,Pcs,Sheet1,245
+prod-skw-00246,SKW00246,Kentang Kupas,Sayur,0,20,Pcs,Sheet1,246
+prod-skw-00247,SKW00247,Seledri,Sayur,0,20,Pcs,Sheet1,247
+prod-skw-00248,SKW00248,Arang,Kebutuhan Rumah,6000,20,Pcs,Sheet1,248
+prod-skw-00249,SKW00249,Ikan Pindang,Sayur,0,20,Pcs,Sheet1,249
+prod-skw-00250,SKW00250,Ikan Tongkol Utuh,Sayur,0,20,Pcs,Sheet1,250
+prod-skw-00251,SKW00251,Ikan Tongkol Potong,Sayur,0,20,Pcs,Sheet1,251
+prod-skw-00252,SKW00252,Bumbu Hidayah,Bumbu Dapur,2500,20,Pcs,Sheet1,252
+prod-skw-00253,SKW00253,Gas LPG,Kebutuhan Rumah,22000,20,Pcs,Sheet2,1
+prod-skw-00254,SKW00254,Gas Portable Refill,Kebutuhan Rumah,18000,20,Pcs,Sheet2,2
+prod-skw-00255,SKW00255,Jamur Enoki,Sayur,5000,20,Pcs,Sheet2,3
+prod-skw-00256,SKW00256,Rokok LA 16,Kebutuhan Rumah,36000,20,Pcs,Sheet2,4
+prod-skw-00257,SKW00257,Rokok Sampoerna Mild 16,Kebutuhan Rumah,37000,20,Pcs,Sheet2,5
+prod-skw-00258,SKW00258,Rokok Magnum Kretek,Kebutuhan Rumah,15000,20,Pcs,Sheet2,6
+prod-skw-00259,SKW00259,Rokok Sampoerna Prima,Kebutuhan Rumah,17000,20,Pcs,Sheet2,7
+prod-skw-00260,SKW00260,Rokok Marlong 12,Kebutuhan Rumah,26000,20,Pcs,Sheet2,8
+prod-skw-00261,SKW00261,Rokok Djarum Black Matcha,Kebutuhan Rumah,17000,20,Pcs,Sheet2,9
+prod-skw-00262,SKW00262,Rokok Dajrum 76 Mangga,Kebutuhan Rumah,16000,20,Pcs,Sheet2,10
+prod-skw-00263,SKW00263,Rokok Dajrum 76 Apel,Kebutuhan Rumah,16000,20,Pcs,Sheet2,11
+prod-skw-00264,SKW00264,Rokok Dji Sam Soe Refill,Kebutuhan Rumah,22000,20,Pcs,Sheet2,12
+prod-skw-00265,SKW00265,Rokok Dji Sam Soe Kretek,Kebutuhan Rumah,17000,20,Pcs,Sheet2,13
+prod-skw-00266,SKW00266,Rokok Sampoerna Kretek,Kebutuhan Rumah,17000,20,Pcs,Sheet2,14
+prod-skw-00267,SKW00267,Rokok Ares,Kebutuhan Rumah,17000,20,Pcs,Sheet2,15
+prod-skw-00268,SKW00268,Rokok LA Bold 20,Kebutuhan Rumah,39000,20,Pcs,Sheet2,16
+prod-skw-00269,SKW00269,Rokok Surya 12,Kebutuhan Rumah,27000,20,Pcs,Sheet2,17
+prod-skw-00270,SKW00270,Rokok Gajah Baru 12,Kebutuhan Rumah,19000,20,Pcs,Sheet2,18
+prod-skw-00271,SKW00271,Rokok Galang Baru 12,Kebutuhan Rumah,18000,20,Pcs,Sheet2,19
+prod-skw-00272,SKW00272,Rokok Galang Baru 16,Kebutuhan Rumah,23000,20,Pcs,Sheet2,20
+prod-skw-00273,SKW00273,Rokok Trubus Alami,Kebutuhan Rumah,10000,20,Pcs,Sheet2,21
+prod-skw-00274,SKW00274,Rokok Gajah Baru Kretek,Kebutuhan Rumah,12000,20,Pcs,Sheet2,22
+prod-skw-00275,SKW00275,Rokok Surya Ecer,Kebutuhan Rumah,2500,20,Pcs,Sheet2,23
+prod-skw-00276,SKW00276,Rokok Marlong Ecer,Kebutuhan Rumah,2500,20,Pcs,Sheet2,24
+prod-skw-00277,SKW00277,Korek Api,Kebutuhan Rumah,2500,20,Pcs,Sheet2,25
+prod-skw-00278,SKW00278,Club Tanggung,Minuman,3000,20,Pcs,Sheet2,26
+prod-skw-00279,SKW00279,Club Besar 1500ml,Minuman,5000,20,Pcs,Sheet2,27
+prod-skw-00280,SKW00280,Larutan Kaleng,Minuman,7000,20,Pcs,Sheet2,28
+prod-skw-00281,SKW00281,Golda,Minuman,4000,20,Pcs,Sheet2,29
+prod-skw-00282,SKW00282,Milku,Minuman,4000,20,Pcs,Sheet2,30
+prod-skw-00283,SKW00283,Bearbrand,Minuman,11000,20,Pcs,Sheet2,31
+prod-skw-00284,SKW00284,You C 1000,Minuman,7000,20,Pcs,Sheet2,32
+prod-skw-00285,SKW00285,Kratindaeng,Minuman,0,20,Pcs,Sheet2,33
+prod-skw-00286,SKW00286,Sprite kecil,Minuman,4000,20,Pcs,Sheet2,34
+prod-skw-00287,SKW00287,Coca Cola Kecil,Minuman,4000,20,Pcs,Sheet2,35
+prod-skw-00288,SKW00288,The gelas,Minuman,1000,20,Pcs,Sheet2,36
+prod-skw-00289,SKW00289,Power F,Minuman,1000,20,Pcs,Sheet2,37
+prod-skw-00290,SKW00290,Kopi Nongrong/Kopikap,Minuman,1000,20,Pcs,Sheet2,38
+prod-skw-00291,SKW00291,Goreng Bakso,Frozen Food,6000,20,Pcs,Sheet2,39
+prod-skw-00292,SKW00292,Kecap Jempol,Bumbu Dapur,12000,20,Pcs,Sheet2,40
+prod-skw-00293,SKW00293,Saos Tomat Jempol,Bumbu Dapur,5000,20,Pcs,Sheet2,41
+prod-skw-00294,SKW00294,Saos Pedas Jempol,Bumbu Dapur,5000,20,Pcs,Sheet2,42
+prod-skw-00295,SKW00295,Aice Semangka,Ice Cream,2000,20,Pcs,Sheet2,43
+prod-skw-00296,SKW00296,Aice Nanas,Ice Cream,2000,20,Pcs,Sheet2,44
+prod-skw-00297,SKW00297,Aice Fruizzy,Ice Cream,3000,20,Pcs,Sheet2,45
+prod-skw-00298,SKW00298,Aice 2 Colours Stick,Ice Cream,3500,20,Pcs,Sheet2,46
+prod-skw-00299,SKW00299,Aice Kopi Crispy,Ice Cream,4500,20,Pcs,Sheet2,47
+prod-skw-00300,SKW00300,Aice Sweetcorn,Ice Cream,4000,20,Pcs,Sheet2,48
+prod-skw-00301,SKW00301,Aice Strawberry Crispy,Ice Cream,4500,20,Pcs,Sheet2,49
+prod-skw-00302,SKW00302,Aice Mochi Vanilla,Ice Cream,3000,20,Pcs,Sheet2,50
+prod-skw-00303,SKW00303,Aice Crispy Ball Coklat,Ice Cream,6000,20,Pcs,Sheet2,51
+prod-skw-00304,SKW00304,Aice Crispy Ball Muscat,Ice Cream,6000,20,Pcs,Sheet2,52
+prod-skw-00305,SKW00305,Es Tube 10kg,Ice Cream,10000,20,Pcs,Sheet2,53
+prod-skw-00306,SKW00306,Es Tube Kecil,Ice Cream,2000,20,Pcs,Sheet2,54
+prod-skw-00307,SKW00307,Delmonte BBQ 250gr,Bumbu Dapur,11000,20,Pcs,Sheet2,55
+prod-skw-00308,SKW00308,Delmonte BBQ 1kg,Bumbu Dapur,34000,20,Pcs,Sheet2,56
+prod-skw-00309,SKW00309,Delmonte Blackpapper 250gr,Bumbu Dapur,12000,20,Pcs,Sheet2,57
+prod-skw-00310,SKW00310,Delmonte Hot 1kg,Bumbu Dapur,24000,20,Pcs,Sheet2,58
+prod-skw-00311,SKW00311,Delmonte Hot 200gr,Bumbu Dapur,8000,20,Pcs,Sheet2,59
+prod-skw-00312,SKW00312,Delmonte Hot 500gr,Bumbu Dapur,14000,20,Pcs,Sheet2,60
+prod-skw-00313,SKW00313,Delmonte Hot Sachet,Bumbu Dapur,8000,20,Pcs,Sheet2,61
+prod-skw-00314,SKW00314,Delmonte Korean BBQ 250gr,Bumbu Dapur,12000,20,Pcs,Sheet2,62
+prod-skw-00315,SKW00315,Delmonte Tomat 200gr,Bumbu Dapur,7500,20,Pcs,Sheet2,63
+prod-skw-00316,SKW00316,Delmonte Tomat 500gr,Bumbu Dapur,11000,20,Pcs,Sheet2,64
+prod-skw-00317,SKW00317,Delmonte Tomat 1kg,Bumbu Dapur,19000,20,Pcs,Sheet2,65
+prod-skw-00318,SKW00318,Delmonte Tomat Sachet,Bumbu Dapur,8000,20,Pcs,Sheet2,66
+prod-skw-00319,SKW00319,Mamayo 1kg,Bumbu Dapur,25000,20,Pcs,Sheet2,67
+prod-skw-00320,SKW00320,Mamayo 100gr,Bumbu Dapur,5000,20,Pcs,Sheet2,68
+prod-skw-00321,SKW00321,Mamayo 200gr,Bumbu Dapur,8000,20,Pcs,Sheet2,69
+prod-skw-00322,SKW00322,Mamayo 500gr,Bumbu Dapur,14000,20,Pcs,Sheet2,70
+prod-skw-00323,SKW00323,Mayonais Maestro Ori 180gr,Bumbu Dapur,0,20,Pcs,Sheet2,71
+prod-skw-00324,SKW00324,Mayonais Maestro Pedas 100gr,Bumbu Dapur,0,20,Pcs,Sheet2,72
+prod-skw-00325,SKW00325,Mc Lewis Saos Keju 250gr,Bumbu Dapur,0,20,Pcs,Sheet2,73
+prod-skw-00326,SKW00326,Mc Lewis Saos Spaghetti 310gr,Bumbu Dapur,0,20,Pcs,Sheet2,74
+prod-skw-00327,SKW00327,Mc Lewis Saos Tomat 200gr,Bumbu Dapur,0,20,Pcs,Sheet2,75
+prod-skw-00328,SKW00328,Gourmet Extra Pedas 1kg,Bumbu Dapur,0,20,Pcs,Sheet2,76
+prod-skw-00329,SKW00329,Sumpit,Kebutuhan Rumah,5000,20,Pcs,Sheet2,77
+prod-skw-00330,SKW00330,Ultra Bumbu Tabur,Bumbu Dapur,6000,20,Pcs,Sheet2,78
+prod-skw-00331,SKW00331,Chilli Oil 250gr,Bumbu Dapur,21000,20,Pcs,Sheet2,79
+prod-skw-00332,SKW00332,Indomilk SKM Putih Pouch,Sembako,12000,20,Pcs,Sheet2,80
+prod-skw-00333,SKW00333,Indomilk SKM Coklat Pouch,Sembako,12000,20,Pcs,Sheet2,81
+prod-skw-00334,SKW00334,Nutricake,Sembako,0,20,Pcs,Sheet2,82
+prod-skw-00335,SKW00335,Bakso Polos,Frozen Food,5000,20,Pcs,Sheet2,83
+prod-skw-00336,SKW00336,Bakso Salam Sachet,Frozen Food,5000,20,Pcs,Sheet2,84
+prod-skw-00337,SKW00337,Bakso Candi Sachet,Frozen Food,6000,20,Pcs,Sheet2,85
+prod-skw-00338,SKW00338,Bakso Salam Sapi Pack,Frozen Food,21000,20,Pcs,Sheet2,86
+prod-skw-00339,SKW00339,Bakso Salam Ayam Besar,Frozen Food,20000,20,Pcs,Sheet2,87
+prod-skw-00340,SKW00340,Bakso Salam Ayam Kerikil,Frozen Food,20000,20,Pcs,Sheet2,88
+prod-skw-00341,SKW00341,Bakso Maju Mapan 725gr,Frozen Food,15000,20,Pcs,Sheet2,89
+prod-skw-00342,SKW00342,Bakso Candi isi 50bj,Frozen Food,23000,20,Pcs,Sheet2,90
+prod-skw-00343,SKW00343,Bakso Ikan Pak Den 250gr,Frozen Food,10000,20,Pcs,Sheet2,91
+prod-skw-00344,SKW00344,Bakso Ikan GO,Frozen Food,14000,20,Pcs,Sheet2,92
+prod-skw-00345,SKW00345,Tahu Bakso Maju Mapan,Frozen Food,11000,20,Pcs,Sheet2,93
+prod-skw-00346,SKW00346,Siomay Mika,Frozen Food,7000,20,Pcs,Sheet2,94
+prod-skw-00347,SKW00347,Bakso Kamil 250gr,Frozen Food,18000,20,Pcs,Sheet2,95
+prod-skw-00348,SKW00348,Bakso Vitalia,Frozen Food,10000,20,Pcs,Sheet2,96
+prod-skw-00349,SKW00349,Cedea Crabstick 250gr,Frozen Food,17000,20,Pcs,Sheet2,97
+prod-skw-00350,SKW00350,Cireng Salju Bintang,Frozen Food,10000,20,Pcs,Sheet2,98
+prod-skw-00351,SKW00351,ILM Odeng,Frozen Food,24000,20,Pcs,Sheet2,99
+prod-skw-00352,SKW00352,ILM Bintang,Frozen Food,14000,20,Pcs,Sheet2,100
+prod-skw-00353,SKW00353,ILM Burger,Frozen Food,14000,20,Pcs,Sheet2,101
+prod-skw-00354,SKW00354,ILM Sukoi,Frozen Food,14000,20,Pcs,Sheet2,102
+prod-skw-00355,SKW00355,ILM Ikan Olahan,Frozen Food,14000,20,Pcs,Sheet2,103
+prod-skw-00356,SKW00356,Mitraku Bakso Mix 500gr,Frozen Food,27000,20,Pcs,Sheet2,104
+prod-skw-00357,SKW00357,Mitraku Bakso Mix 250gr,Frozen Food,0,20,Pcs,Sheet2,105
+prod-skw-00358,SKW00358,Indomina Sosis Salju,Frozen Food,0,20,Pcs,Sheet2,106
+prod-skw-00359,SKW00359,Indomina Stik Kepiting,Frozen Food,0,20,Pcs,Sheet2,107
+prod-skw-00360,SKW00360,Indomina Chicken Dumpling,Frozen Food,25000,20,Pcs,Sheet2,108
+prod-skw-00361,SKW00361,Indomina Cheese Dumpling,Frozen Food,26000,20,Pcs,Sheet2,109
+prod-skw-00362,SKW00362,Indomina Fish Ball,Frozen Food,0,20,Pcs,Sheet2,110
+prod-skw-00363,SKW00363,Indomina Twowister,Frozen Food,0,20,Pcs,Sheet2,111
+prod-skw-00364,SKW00364,Daging Sapi Giling 250gr,Frozen Food,28000,20,Pcs,Sheet2,112
+prod-skw-00365,SKW00365,Beef Slice Mix Fat,Frozen Food,42000,20,Pcs,Sheet2,113
+prod-skw-00366,SKW00366,Beef Slice Low Fat,Frozen Food,0,20,Pcs,Sheet2,114
+prod-skw-00367,SKW00367,Kebab Happy Original,Frozen Food,0,20,Pcs,Sheet2,115
+prod-skw-00368,SKW00368,Kulit Lumpia IP Kotak isi 50,Frozen Food,11000,20,Pcs,Sheet2,116
+prod-skw-00369,SKW00369,Kulit Lumpia Pink Bulat,Frozen Food,10000,20,Pcs,Sheet2,117
+prod-skw-00370,SKW00370,Kulit Lumpia Hoq Top,Frozen Food,10000,20,Pcs,Sheet2,118
+prod-skw-00371,SKW00371,Kulit Dimsum 10cm,Frozen Food,10000,20,Pcs,Sheet2,119
+prod-skw-00372,SKW00372,Kulit Dimsum 8cm,Frozen Food,10000,20,Pcs,Sheet2,120
+prod-skw-00373,SKW00373,Maryam Shabrina Original,Frozen Food,10000,20,Pcs,Sheet2,121
+prod-skw-00374,SKW00374,Maryam Shabrina Coklat,Frozen Food,10000,20,Pcs,Sheet2,122
+prod-skw-00375,SKW00375,Maryam MC Original,Frozen Food,14000,20,Pcs,Sheet2,123
+prod-skw-00376,SKW00376,Donat MC Original,Frozen Food,14000,20,Pcs,Sheet2,124
+prod-skw-00377,SKW00377,Donat MC Coklat,Frozen Food,17000,20,Pcs,Sheet2,125
+prod-skw-00378,SKW00378,Donat Sari Nikmat,Frozen Food,24000,20,Pcs,Sheet2,126
+prod-skw-00379,SKW00379,Minipao Coklat,Frozen Food,14000,20,Pcs,Sheet2,127
+prod-skw-00380,SKW00380,Minipao Strawberry,Frozen Food,14000,20,Pcs,Sheet2,128
+prod-skw-00381,SKW00381,Kentang Max 1kg,Frozen Food,30000,20,Pcs,Sheet2,129
+prod-skw-00382,SKW00382,Kentang Polos 500gr,Frozen Food,17000,20,Pcs,Sheet2,130
+prod-skw-00383,SKW00383,Nugget Salam 250GR,Frozen Food,12000,20,Pcs,Sheet2,131
+prod-skw-00384,SKW00384,Nugget Salam Crispy 225gr,Frozen Food,12000,20,Pcs,Sheet2,132
+prod-skw-00385,SKW00385,Nugget Salam Stick 250gr,Frozen Food,12000,20,Pcs,Sheet2,133
+prod-skw-00386,SKW00386,Nugget Salam 500gr,Frozen Food,19000,20,Pcs,Sheet2,134
+prod-skw-00387,SKW00387,Nugget Salam Stick 500gr,Frozen Food,19000,20,Pcs,Sheet2,135
+prod-skw-00388,SKW00388,Nugget Salam Hati 1kg,Frozen Food,35000,20,Pcs,Sheet2,136
+prod-skw-00389,SKW00389,Nugget Bartoz 250gr,Frozen Food,13000,20,Pcs,Sheet2,137
+prod-skw-00390,SKW00390,Nugget Bartoz Crispy 225gr,Frozen Food,15000,20,Pcs,Sheet2,138
+prod-skw-00391,SKW00391,Nugget So Nice Koin 250gr,Frozen Food,0,20,Pcs,Sheet2,139
+prod-skw-00392,SKW00392,Nugget So Nice Stik 250gr,Frozen Food,0,20,Pcs,Sheet2,140
+prod-skw-00393,SKW00393,Nugget Ngejoss 250gr,Frozen Food,12000,20,Pcs,Sheet2,141
+prod-skw-00394,SKW00394,Nugget Akumo 250gr,Frozen Food,13000,20,Pcs,Sheet2,142
+prod-skw-00395,SKW00395,Nugget Umiami 250gr,Frozen Food,10000,20,Pcs,Sheet2,143
+prod-skw-00396,SKW00396,Nugget So Eco Crispy 225gr,Frozen Food,11000,20,Pcs,Sheet2,144
+prod-skw-00397,SKW00397,Nugget So Eco Crispy 450gr,Frozen Food,18000,20,Pcs,Sheet2,145
+prod-skw-00398,SKW00398,Nugget So Eco 500gr,Frozen Food,18000,20,Pcs,Sheet2,146
+prod-skw-00399,SKW00399,Nugget So Eco 1kg,Frozen Food,33000,20,Pcs,Sheet2,147
+prod-skw-00400,SKW00400,Nugget Kanzler Crispy 450gr,Frozen Food,40000,20,Pcs,Sheet2,148
+prod-skw-00401,SKW00401,Lezza Chicken Wings,Frozen Food,0,20,Pcs,Sheet2,149
+prod-skw-00402,SKW00402,Lezza Chicken Karage,Frozen Food,0,20,Pcs,Sheet2,150
+prod-skw-00403,SKW00403,Sosis Salam Bakar isi 12,Frozen Food,28000,20,Pcs,Sheet2,151
+prod-skw-00404,SKW00404,Sosis Salam Ayam Merah 500gr,Frozen Food,18000,20,Pcs,Sheet2,152
+prod-skw-00405,SKW00405,Sosis Salam Ayam Merah 750gr,Frozen Food,25000,20,Pcs,Sheet2,153
+prod-skw-00406,SKW00406,Sosis Salam Sapi Long 450gr,Frozen Food,19000,20,Pcs,Sheet2,154
+prod-skw-00407,SKW00407,Sosis Ngejoss Bakar isi 12,Frozen Food,25000,20,Pcs,Sheet2,155
+prod-skw-00408,SKW00408,Sosis Ngejoss Merah 1kg,Frozen Food,34000,20,Pcs,Sheet2,156
+prod-skw-00409,SKW00409,Sosis So Nice Bakar isi 10,Frozen Food,29000,20,Pcs,Sheet2,157
+prod-skw-00410,SKW00410,Sosis Uenak Merah isi 3,Frozen Food,5000,20,Pcs,Sheet2,158
+prod-skw-00411,SKW00411,Sosis Kamil isi 3,Frozen Food,6000,20,Pcs,Sheet2,159
+prod-skw-00412,SKW00412,Sosis So Nice isi 3,Frozen Food,5000,20,Pcs,Sheet2,160
+prod-skw-00413,SKW00413,Sosis Champ isi 3,Frozen Food,5000,20,Pcs,Sheet2,161
+prod-skw-00414,SKW00414,Sosis Uenak 1kg,Frozen Food,34000,20,Pcs,Sheet2,162
+prod-skw-00415,SKW00415,Sosis Champ Ayam isi 15,Frozen Food,19000,20,Pcs,Sheet2,163
+prod-skw-00416,SKW00416,Sosis Champ Bakar isi 12,Frozen Food,0,20,Pcs,Sheet2,164
+prod-skw-00417,SKW00417,Sosis Umiami Cocktail 450gr,Frozen Food,18000,20,Pcs,Sheet2,165
+prod-skw-00418,SKW00418,Kornet Salam,Frozen Food,0,20,Pcs,Sheet2,166
+prod-skw-00419,SKW00419,Beef Vitalia 280gr,Frozen Food,11000,20,Pcs,Sheet2,167
+prod-skw-00420,SKW00420,Sosis Ngetop 250gr,Frozen Food,0,20,Pcs,Sheet2,168
+prod-skw-00421,SKW00421,Sosis Ngetop 500gr,Frozen Food,19000,20,Pcs,Sheet2,169
+prod-skw-00422,SKW00422,Sosis Horeca VP 500gr,Frozen Food,0,20,Pcs,Sheet2,170
+prod-skw-00423,SKW00423,Sosis Champ 1kg,Frozen Food,0,20,Pcs,Sheet2,171
+prod-skw-00424,SKW00424,Sosis Kamil Merah 450gr,Frozen Food,32000,20,Pcs,Sheet2,172
+prod-skw-00425,SKW00425,Club Tanggung Karton,Minuman,41000,20,Pcs,Sheet2,173
+prod-skw-00426,SKW00426,Club Besar 1500ml Karton,Minuman,41000,20,Pcs,Sheet2,174
+prod-skw-00427,SKW00427,Nipis Madu,Minuman,5000,20,Pcs,Sheet2,175
+prod-skw-00428,SKW00428,Nipis Madu Karton,Minuman,0,20,Pcs,Sheet2,176
+prod-skw-00429,SKW00429,Golda Krat,Minuman,0,20,Pcs,Sheet2,177
+prod-skw-00430,SKW00430,Cleo Krat,Minuman,0,20,Pcs,Sheet2,178
+prod-skw-00431,SKW00431,Milku Krat,Minuman,0,20,Pcs,Sheet2,179
+prod-skw-00432,SKW00432,The Pucuk,Minuman,4000,20,Pcs,Sheet2,180
+prod-skw-00433,SKW00433,The Pucuk Karton,Minuman,0,20,Pcs,Sheet2,181

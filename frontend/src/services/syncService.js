@@ -117,6 +117,7 @@ export const syncService = {
           console.log(`[SAFE-MERGE] Record lokal sebelum merge di tabel ${coll}: ${existingData.length}`);
           
           const existingMap = new Map(existingData.map(item => [item.id, item]));
+          const cloudIdSet = new Set(data.map(item => item.id));
           let updateCount = 0;
           let insertCount = 0;
           
@@ -130,6 +131,22 @@ export const syncService = {
             insertCount++;
             return cloudItem;
           });
+
+          // For products, remove any local records that no longer exist in Firebase
+          // (unless they are currently PENDING in sync_queue)
+          if (coll === 'products') {
+            const pendingQueue = await db.sync_queue
+              .filter(q => (q.entity === 'products' || q.type === 'PRODUCT') && q.status === 'PENDING')
+              .toArray();
+            const pendingProductIds = new Set(pendingQueue.map(q => q.payload?.id).filter(Boolean));
+            const staleIds = existingData
+              .map(item => item.id)
+              .filter(id => !cloudIdSet.has(id) && !pendingProductIds.has(id));
+            if (staleIds.length > 0) {
+              await db.products.bulkDelete(staleIds);
+              logger.info(`[SAFE-MERGE] Menghapus ${staleIds.length} produk lama/dummy dari IndexedDB lokal.`);
+            }
+          }
           
           await db[coll].bulkPut(mergedData);
           const afterCount = await db[coll].count();
@@ -137,43 +154,6 @@ export const syncService = {
         } else {
           console.log(`[CLOUD-RESTORE] Tabel ${coll} kosong di awan, dilewati.`);
         }
-      }
-
-      // AUTO-RECOVERY for corrupted products
-      try {
-        const queue = await db.sync_queue.toArray();
-        // Look for any full product payload we ever created locally
-        const productCreations = queue.filter(q => 
-          (q.type === 'PRODUCT' || q.entity === 'products') && 
-          q.payload && q.payload.name
-        );
-        
-        if (productCreations.length > 0) {
-          productCreations.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
-          const recoveredMap = {};
-          
-          for (const q of productCreations) {
-            recoveredMap[q.payload.id] = q.payload;
-          }
-          
-          const recoveredProducts = Object.values(recoveredMap);
-          for (const p of recoveredProducts) {
-             const existing = await db.products.get(p.id);
-             if (existing && existing.stock !== undefined) {
-               p.stock = existing.stock; // preserve latest stock
-             }
-          }
-          
-          await db.products.bulkPut(recoveredProducts);
-          logger.info(`Recovered ${recoveredProducts.length} full products from local queue.`);
-          
-          // Re-upload to Firebase to fix the corrupted stubs
-          for (const p of recoveredProducts) {
-            await apiClient.syncOperation({ entity: 'products', action: 'UPDATE', payload: p });
-          }
-        }
-      } catch(e) {
-        logger.error('Auto-recovery failed:', e);
       }
 
       logger.info('Cloud Restore Complete! All local data is now synchronized with Firebase.');

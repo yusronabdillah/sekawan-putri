@@ -102,14 +102,25 @@ export const usePrinterStore = create(
 export const useCategoryStore = create(
   persist(
     (set) => ({
-      categories: ['Frozen Food', 'Minuman', 'Sembako', 'Sayur', 'Ice Cream', 'Endog'],
+      categories: [
+        'Frozen Food', 
+        'Sayur', 
+        'Buah', 
+        'Bumbu Dapur', 
+        'Sembako', 
+        'Minuman', 
+        'Ice Cream', 
+        'Kebutuhan Rumah'
+      ],
       parentMapping: {
         'Frozen Food': 'Kategori A',
         'Minuman': 'Kategori A',
         'Sembako': 'Kategori A',
+        'Kebutuhan Rumah': 'Kategori A',
         'Sayur': 'Kategori B',
-        'Ice Cream': 'Kategori B',
-        'Endog': 'Kategori B'
+        'Buah': 'Kategori B',
+        'Bumbu Dapur': 'Kategori B',
+        'Ice Cream': 'Kategori B'
       },
       addCategory: (cat, parent = 'Kategori A') => set((state) => {
         if (!state.categories.includes(cat)) {
@@ -130,16 +141,20 @@ export const useCategoryStore = create(
       })
     }),
     {
-      name: 'sekawan-category-storage',
+      name: 'sekawan-category-storage-v2',
       merge: (persistedState, currentState) => {
-        // Ensure new defaults from source code are merged into persisted state
-        const mergedCategories = Array.from(new Set([...currentState.categories, ...(persistedState?.categories || [])]));
+        const validCategories = currentState.categories;
+        const persistedCats = persistedState?.categories?.filter(c => c !== 'Endog') || [];
+        const mergedCategories = Array.from(new Set([...validCategories, ...persistedCats]));
         
         return {
           ...currentState,
           ...persistedState,
           categories: mergedCategories,
-          parentMapping: persistedState?.parentMapping || currentState.parentMapping
+          parentMapping: {
+            ...currentState.parentMapping,
+            ...(persistedState?.parentMapping || {})
+          }
         };
       }
     }

@@ -1,48 +1,34 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Search, Calendar, Clock, ArrowRight, BookOpen } from 'lucide-react';
+import ProductIllustration from '../components/ProductIllustration';
 
-// Categories will be dynamically generated from products
-
-export const getFallbackImage = (category, name) => {
-  const n = (name || '').toLowerCase();
-  const c = (category || '').toLowerCase();
-
-  if (n.includes('dimsum') || n.includes('siomay') || n.includes('dumpling')) {
-    return 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?q=80&w=800&auto=format&fit=crop';
-  }
-  if (n.includes('sosis')) {
-    return 'https://images.unsplash.com/photo-1595155135117-6ff56f4d0840?q=80&w=800&auto=format&fit=crop';
-  }
-  if (n.includes('nugget') || n.includes('karage')) {
-    return 'https://images.unsplash.com/photo-1569691899455-88464f6d3cb1?q=80&w=800&auto=format&fit=crop';
-  }
-  if (n.includes('ayam') || n.includes('chicken')) {
-    return 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=800&auto=format&fit=crop';
-  }
-  if (n.includes('sapi') || n.includes('beef') || n.includes('daging')) {
-    return 'https://images.unsplash.com/photo-1603048297172-c92544798d5e?q=80&w=800&auto=format&fit=crop';
-  }
-  if (n.includes('bakso')) {
-    return 'https://images.unsplash.com/photo-1568909344668-6f14a07b56a0?q=80&w=800&auto=format&fit=crop'; // Meatball soup
-  }
-  if (c.includes('sayur') || n.includes('kentang')) {
-    return 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop';
-  }
-  if (c.includes('minuman')) {
-    return 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop';
-  }
-
-  // Generic appetizing frozen food / grocery mix
-  return 'https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?q=80&w=800&auto=format&fit=crop';
-};
-
-export default function Home({ products, WA_NUMBER }) {
+export default function Home({ products, articles = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 12;
   const gridRef = React.useRef(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    document.title = 'Sekawan Putri - Katalog Frozen Food & Sayur Segar Dau, Malang';
+    if (location.hash === '#produk' || window.location.hash === '#produk') {
+      const scroll = () => {
+        const el = document.getElementById('produk');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+      scroll();
+      const t1 = setTimeout(scroll, 100);
+      const t2 = setTimeout(scroll, 300);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    }
+  }, [location.hash, location.pathname]);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -53,17 +39,25 @@ export default function Home({ products, WA_NUMBER }) {
     }
   };
 
+  const sortedProducts = useMemo(() => {
+    return [...products].sort((a, b) => {
+      const skuA = a.sku || a.id || '';
+      const skuB = b.sku || b.id || '';
+      return skuA.localeCompare(skuB);
+    });
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
-    return products.filter(product => {
+    return sortedProducts.filter(product => {
       const matchSearch = product.name?.toLowerCase().includes(searchQuery.toLowerCase());
       const prodCategory = product.category || 'Lainnya';
       let matchCategory = true;
       if (activeCategory !== 'Semua') {
-        matchCategory = prodCategory.toLowerCase().includes(activeCategory.toLowerCase());
+        matchCategory = prodCategory.toLowerCase() === activeCategory.toLowerCase();
       }
       return matchSearch && matchCategory;
     });
-  }, [products, searchQuery, activeCategory]);
+  }, [sortedProducts, searchQuery, activeCategory]);
 
   // Reset page when filter changes
   React.useEffect(() => {
@@ -76,16 +70,64 @@ export default function Home({ products, WA_NUMBER }) {
     currentPage * ITEMS_PER_PAGE
   );
 
+  // Generate compact pagination numbers with ellipsis
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    const pages = [1];
+    if (currentPage > 3) pages.push('...');
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    if (currentPage < totalPages - 2) pages.push('...');
+    pages.push(totalPages);
+    return pages;
+  }, [totalPages, currentPage]);
+
   const dynamicCategories = useMemo(() => {
-    const cats = new Set(products.map(p => p.category).filter(c => c && c.trim() !== ''));
-    return ['Semua', ...Array.from(cats).sort()];
+    const PREFERRED_ORDER = [
+      'Frozen Food', 'Sayur', 'Buah', 'Bumbu Dapur', 
+      'Sembako', 'Minuman', 'Ice Cream', 'Kebutuhan Rumah'
+    ];
+    const presentCats = new Set(products.map(p => p.category).filter(c => c && c.trim() !== ''));
+    const sorted = Array.from(presentCats).sort((a, b) => {
+      const idxA = PREFERRED_ORDER.indexOf(a);
+      const idxB = PREFERRED_ORDER.indexOf(b);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return a.localeCompare(b);
+    });
+    return ['Semua', ...sorted];
   }, [products]);
+
+  const latestArticles = useMemo(() => {
+    return [...articles]
+      .sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0))
+      .slice(0, 3);
+  }, [articles]);
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    try {
+      return new Date(dateStr).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
   return (
     <main className="container">
       {/* BANNER HERO SECTION */}
-      <section style={{ margin: '24px auto 48px auto', width: '100%', maxWidth: '1000px', borderRadius: '24px', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
-        <img src="/banner.jpg?v=3" alt="Selamat Datang di Sekawan Putri Frozen Food" style={{ width: '100%', height: 'auto', display: 'block' }} />
+      <section style={{ margin: '24px auto 48px auto', width: '100%', maxWidth: '1000px', aspectRatio: '1376 / 768', borderRadius: '24px', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
+        <img src="/banner.jpg?v=3" alt="Selamat Datang di Sekawan Putri Frozen Food" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
       </section>
 
       {/* CATALOG SECTION */}
@@ -95,7 +137,7 @@ export default function Home({ products, WA_NUMBER }) {
             <Search size={20} strokeWidth={2} />
             <input 
               type="text" 
-              placeholder="Cari produk apa hari ini?" 
+              placeholder={`Cari dari ${products.length || 433} produk tersedia hari ini...`} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -126,11 +168,10 @@ export default function Home({ products, WA_NUMBER }) {
             currentProducts.map(product => {
               const stock = product.stock || 0;
               const isAvailable = stock > 0;
-              const imgUrl = product.image_url || getFallbackImage(product.category, product.name);
+              const hasImage = Boolean(product.image_url && product.image_url.trim() !== '');
               
               return (
                 <Link to={`/product/${product.id}`} key={product.id} className="product-card">
-                  {/* Badge moved to card level so it overlaps the right text area */}
                   {isAvailable ? (
                     <div className="badge badge-success product-badge">Tersedia</div>
                   ) : (
@@ -138,18 +179,27 @@ export default function Home({ products, WA_NUMBER }) {
                   )}
                   
                   <div className="product-img-wrapper">
-                    <img src={imgUrl} alt={product.name} className="product-img" loading="lazy" />
+                    {hasImage ? (
+                      <img 
+                        src={product.image_url} 
+                        alt={product.name} 
+                        className="product-img" 
+                        loading="lazy"
+                      />
+                    ) : (
+                      <ProductIllustration name={product.name} category={product.category} size="fill" />
+                    )}
                   </div>
                   
                   <div className="product-info">
                     <h3 className="product-title">{product.name}</h3>
                     <div className="product-price">
-                      Rp {(product.price || 0).toLocaleString('id-ID')}
+                      {product.price > 0 ? `Rp ${product.price.toLocaleString('id-ID')}` : 'Harga Menyesuaikan'}
                     </div>
                     
                     <div className="stock-text">
                       <div className={`stock-dot ${stock > 10 ? 'high' : (stock > 0 ? 'low' : 'out')}`}></div>
-                      Sisa stok: {stock} {product.unit ? product.unit.toLowerCase() : (stock % 1 !== 0 ? 'kg' : 'pack')}
+                      Sisa stok: {stock} {product.unit ? product.unit.toLowerCase() : 'pcs'}
                     </div>
                   </div>
                 </Link>
@@ -165,30 +215,91 @@ export default function Home({ products, WA_NUMBER }) {
               className="page-btn" 
               onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
+              aria-label="Halaman Sebelumnya"
             >
               &laquo;
             </button>
             
-            {Array.from({length: totalPages}, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                className={`page-btn ${currentPage === page ? 'active' : ''}`}
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </button>
+            {pageNumbers.map((page, idx) => (
+              page === '...' ? (
+                <span key={`ellipsis-${idx}`} style={{ padding: '0 4px', color: 'var(--text-muted)', fontWeight: '700' }}>...</span>
+              ) : (
+                <button
+                  key={page}
+                  className={`page-btn ${currentPage === page ? 'active' : ''}`}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </button>
+              )
             ))}
 
             <button 
               className="page-btn" 
               onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
+              aria-label="Halaman Berikutnya"
             >
               &raquo;
             </button>
           </div>
         )}
       </section>
+
+      {/* PORTAL BERITA / ARTIKEL SECTION (3 TERBARU) */}
+      {latestArticles.length > 0 && (
+        <section id="artikel" className="home-articles-section">
+          <div className="home-articles-header">
+            <div>
+              <span className="section-tag">
+                <BookOpen size={14} /> Portal Berita & Tips Dapur
+              </span>
+              <h2 className="home-articles-title">Artikel & Inspirasi Terbaru</h2>
+              <p className="home-articles-subtitle">
+                Tips menyimpan frozen food, sayuran segar, dan ide masakan praktis untuk keluarga Anda.
+              </p>
+            </div>
+            <Link to="/artikel" className="btn btn-outline-primary">
+              Lihat Semua Artikel <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          <div className="article-grid">
+            {latestArticles.map(article => (
+              <Link to={`/artikel/${article.slug}`} key={article.id || article.slug} className="article-card">
+                <div className="article-img-wrapper">
+                  <img 
+                    src={article.image_url} 
+                    alt={article.title} 
+                    className="article-img" 
+                    loading="lazy" 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/banner.jpg';
+                    }}
+                  />
+                  {article.category && (
+                    <span className="article-category-badge">{article.category}</span>
+                  )}
+                </div>
+                <div className="article-body">
+                  <div className="article-meta">
+                    <span><Calendar size={13} /> {formatDate(article.published_at)}</span>
+                    {article.read_time && (
+                      <span><Clock size={13} /> {article.read_time}</span>
+                    )}
+                  </div>
+                  <h3 className="article-title">{article.title}</h3>
+                  <p className="article-excerpt">{article.excerpt}</p>
+                  <div className="article-read-more">
+                    Baca Selengkapnya <ArrowRight size={16} />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

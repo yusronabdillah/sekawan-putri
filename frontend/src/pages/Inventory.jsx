@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
 import Modal from '../components/Modal';
 import CustomSelect from '../components/CustomSelect';
@@ -10,8 +11,14 @@ import Papa from 'papaparse';
 import { useCategoryStore, useAuthStore } from '../store/store';
 
 export default function Inventory() {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const liveProducts = useLiveQuery(() => db.products.toArray(), null);
+  const isLoading = liveProducts === null;
+  const products = React.useMemo(() => {
+    if (!liveProducts) return [];
+    return [...liveProducts]
+      .filter(p => p.name && String(p.name).trim() !== '' && String(p.name) !== 'undefined')
+      .sort((a, b) => (a.sku || a.id || '').localeCompare(b.sku || b.id || ''));
+  }, [liveProducts]);
   const [search, setSearch] = useState('');
   const [parentCategory, setParentCategory] = useState('Semua');
   const [filterCategory, setFilterCategory] = useState('Semua');
@@ -31,10 +38,6 @@ export default function Inventory() {
   
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
-
-  useEffect(() => {
-    loadProducts();
-  }, []);
 
   const filteredProducts = React.useMemo(() => {
     let result = products;
@@ -56,26 +59,14 @@ export default function Inventory() {
       );
     }
     return result;
-  }, [search, filterCategory, parentCategory, products]);
+  }, [search, filterCategory, parentCategory, products, categories, parentMapping]);
 
   const loadProducts = async () => {
-    setIsLoading(true);
-    // --- AUTO CLEANUP GHOST/ZOMBIE PRODUCTS ---
     const allLocal = await db.products.toArray();
     const zombies = allLocal.filter(p => !p.name || String(p.name).trim() === '' || String(p.name) === 'undefined');
     if (zombies.length > 0) {
-      console.log(`[AUTO-CLEANUP] Ditemukan ${zombies.length} produk cacat di memori lokal. Menghapus...`);
       await db.products.bulkDelete(zombies.map(z => z.id));
     }
-    // ------------------------------------------
-
-    const data = await db.products.toArray();
-    console.log(`[INVENTORY-LOAD] Memuat ${data.length} produk sehat dari IndexedDB (Lokal).`);
-    if(data.length > 0) {
-       console.log(`[INVENTORY-LOAD] Contoh Produk Teratas:`, data[0]);
-    }
-    setProducts(data);
-    setIsLoading(false);
   };
 
   const handleHardReset = async () => {
@@ -200,7 +191,7 @@ export default function Inventory() {
           const inserts = [];
           
           for (const row of batch) {
-              const barcode = row['Barcode']?.trim();
+              const barcode = (row['Barcode'] || row['SKU'])?.trim();
               if (!barcode) continue; 
               
               const productData = {
@@ -210,7 +201,7 @@ export default function Inventory() {
                   price: Number(String(row['Harga Jual']).replace(/[^0-9]/g, '')) || 0,
                   cost_price: Number(String(row['Harga Modal'] || '0').replace(/[^0-9]/g, '')) || 0,
                   stock: Number(row['Stok Awal']) || 0,
-                  unit: row['Unit'] || 'Pcs',
+                  unit: row['Unit'] || row['Satuan'] || 'Pcs',
                   barcode: barcode,
                   image_url: skuMap.has(barcode) ? skuMap.get(barcode).image_url : ''
               };
@@ -427,7 +418,7 @@ export default function Inventory() {
             Belum ada produk atau pencarian tidak ditemukan.
           </div>
         ) : (
-          filteredProducts.slice(0, 100).map(p => (
+          filteredProducts.map(p => (
           <div key={p.id} className="card flex justify-between items-center" style={{ padding: '16px', margin: 0 }}>
             <div className="flex items-center gap-3">
               <div style={{ width: '48px', height: '48px', borderRadius: '8px', overflow: 'hidden', backgroundColor: 'var(--background)', flexShrink: 0 }}>
@@ -442,7 +433,7 @@ export default function Inventory() {
               <div>
                 <div style={{ fontWeight: '600' }}>{p.name}</div>
                 <div style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
-                  <span>Barcode: {p.barcode || '-'} • Stok: {p.stock}</span>
+                  <span>Barcode: {p.barcode || '-'} • Kategori: {p.category || '-'} • Stok: {p.stock} {p.unit || 'Pcs'}</span>
                   {p.stock <= 0 ? (
                     <span className="badge badge-danger" style={{ padding: '2px 8px', fontSize: '10px', boxShadow: 'var(--shadow-sm)' }}>
                       Habis
@@ -453,7 +444,7 @@ export default function Inventory() {
             </div>
             <div className="flex items-center gap-3">
               <div style={{ fontWeight: '700', color: 'var(--primary)', textAlign: 'right' }}>
-                Rp {(p.price || 0).toLocaleString('id-ID')}
+                {p.price > 0 ? `Rp ${p.price.toLocaleString('id-ID')}` : <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>Input Manual (Rp 0)</span>}
               </div>
               <button className="btn btn-secondary" style={{ padding: '8px' }} onClick={() => handleOpenEdit(p)}>
                 <Edit2 size={16} />
@@ -487,9 +478,9 @@ export default function Inventory() {
             </div>
           </div>
         )))}
-        {filteredProducts.length > 100 && (
+        {filteredProducts.length > 0 && (
           <div style={{ textAlign: 'center', padding: '12px', color: 'var(--text-muted)', fontSize: '14px' }}>
-            Menampilkan 100 dari {filteredProducts.length} produk. Gunakan pencarian untuk mencari produk lain.
+            Menampilkan seluruh <strong>{filteredProducts.length}</strong> produk (Total Master: {products.length} produk).
           </div>
         )}
       </div>

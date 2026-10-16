@@ -46,8 +46,8 @@ const ReceiptTemplate = React.forwardRef(({ transaction, config }, ref) => {
         <div style={{ fontWeight: 'bold', fontSize: headerFontSize, marginBottom: '2px' }}>SEKAWAN PUTRI POS</div>
         {showAddress && (
           <div style={{ fontSize: baseFontSize }}>
-            Jl. Raya Perdagangan No 123<br />
-            Telp: 0812-3456-7890
+            Jl. Tirto Rahayu No.12 A, Dau, Malang<br />
+            Telp/WA: 0857-7558-6209
           </div>
         )}
       </div>

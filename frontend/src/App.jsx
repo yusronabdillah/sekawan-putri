@@ -79,31 +79,28 @@ export default function App() {
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    // ONE-TIME SCRIPT to append 1 KG to all Sayur category products
-    const fixSayurNames = async () => {
-      if (localStorage.getItem('sayur_1kg_fixed')) return;
+    const migrateListXlsxV1 = async () => {
       try {
-        const sayurs = await db.products.where('category').equals('Sayur').toArray();
-        let changed = false;
-        for (const s of sayurs) {
-          let newName = s.name;
-          if (!newName.toUpperCase().includes('1KG') && !newName.toUpperCase().includes('1 KG')) {
-            newName = `${newName} 1 KG`.toUpperCase();
-            await db.products.update(s.id, { name: newName, unit: 'Kg' });
-            changed = true;
-          } else if (s.unit !== 'Kg') {
-            await db.products.update(s.id, { unit: 'Kg' });
-            changed = true;
+        if (!localStorage.getItem('list_xlsx_433_v3_images')) {
+          console.log('[MIGRATION] Membersihkan produk lokal IndexedDB untuk sinkronisasi foto produk baru...');
+          await db.products.clear();
+          const oldProductQueue = await db.sync_queue
+            .filter(q => q.entity === 'products' || q.type === 'PRODUCT')
+            .toArray();
+          if (oldProductQueue.length > 0) {
+            await db.sync_queue.bulkDelete(oldProductQueue.map(q => q.id));
           }
+          localStorage.setItem('list_xlsx_433_v3_images', 'true');
         }
-        localStorage.setItem('sayur_1kg_fixed', 'true');
-        console.log('Fixed sayur names!');
-        if (changed) window.location.reload();
+        if (window.navigator.onLine) {
+          const { syncService } = await import('./services/syncService');
+          await syncService.pullData();
+        }
       } catch (e) {
-        console.error(e);
+        console.error('[MIGRATION ERROR]', e);
       }
     };
-    fixSayurNames();
+    migrateListXlsxV1();
   }, []);
 
   useEffect(() => {

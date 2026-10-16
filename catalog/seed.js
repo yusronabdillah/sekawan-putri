@@ -1,5 +1,11 @@
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, writeBatch, doc } from "firebase/firestore";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const firebaseConfig = {
   apiKey: "AIzaSyAPednaDojIDY9BUChZ7b9pLAXciFzOxhU",
@@ -14,101 +20,69 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+async function chunkedDelete(docs) {
+  const CHUNK_SIZE = 200;
+  for (let i = 0; i < docs.length; i += CHUNK_SIZE) {
+    const chunk = docs.slice(i, i + CHUNK_SIZE);
+    const batch = writeBatch(db);
+    chunk.forEach((d) => batch.delete(doc(db, "products", d.id)));
+    await batch.commit();
+    console.log(`Deleted ${Math.min(i + CHUNK_SIZE, docs.length)} / ${docs.length} old products...`);
+  }
+}
+
+async function chunkedInsert(products) {
+  const CHUNK_SIZE = 200;
+  const now = new Date().toISOString();
+  for (let i = 0; i < products.length; i += CHUNK_SIZE) {
+    const chunk = products.slice(i, i + CHUNK_SIZE);
+    const batch = writeBatch(db);
+    chunk.forEach((p) => {
+      const payload = {
+        id: p.id,
+        sku: p.sku,
+        barcode: p.barcode,
+        name: p.name,
+        category: p.category,
+        price: p.price,
+        cost_price: p.cost_price || 0,
+        stock: p.stock ?? 20,
+        unit: p.unit || "Pcs",
+        image_url: p.image_url || "",
+        discount: 0,
+        exp_date: "",
+        updated_at: now
+      };
+      batch.set(doc(db, "products", p.id), payload);
+    });
+    await batch.commit();
+    console.log(`Uploaded ${Math.min(i + CHUNK_SIZE, products.length)} / ${products.length} new products...`);
+  }
+}
+
 async function run() {
-  console.log("Starting DB update...");
-  
-  // 1. Fix broken images by clearing image_url on existing products 
-  // (so they use the robust getFallbackImage frontend logic)
-  const querySnapshot = await getDocs(collection(db, "products"));
-  let updatedCount = 0;
-  
-  for (const docSnapshot of querySnapshot.docs) {
-    const data = docSnapshot.data();
-    // If it has an image_url but it's not from unsplash (or maybe just clear all to be safe and let fallback handle it unless we explicitly set it below)
-    if (data.image_url && !data.image_url.includes("unsplash")) {
-      await updateDoc(doc(db, "products", docSnapshot.id), {
-        image_url: ""
-      });
-      updatedCount++;
-    }
-  }
-  console.log(`Cleared broken image_url on ${updatedCount} existing products.`);
+  console.log("=== MIGRASI PRODUK SEKAWAN PUTRI DARI LIST.xlsx ===");
+  const jsonPath = path.join(__dirname, "products_list_433.json");
+  const products = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
+  console.log(`Loaded ${products.length} products from products_list_433.json`);
 
-  // 2. Add dummy products
-  const dummies = [
-    {
-      name: "Teh Pucuk Harum 350ml",
-      price: 4000,
-      category: "Minuman",
-      stock: 50,
-      description: "Teh Pucuk Harum 350ml segar, cocok untuk menemani makan siang Anda. Dibuat dari pucuk teh pilihan.",
-      image_url: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=800&auto=format&fit=crop"
-    },
-    {
-      name: "Coca-Cola 1.5 Liter",
-      price: 15000,
-      category: "Minuman",
-      stock: 20,
-      description: "Minuman soda menyegarkan ukuran botol besar 1.5L. Sangat pas disajikan dingin untuk acara keluarga atau pesta.",
-      image_url: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop"
-    },
-    {
-      name: "Aqua Air Mineral 600ml",
-      price: 3000,
-      category: "Minuman",
-      stock: 100,
-      description: "Air minum dalam kemasan dari sumber mata air pegunungan terbaik.",
-      image_url: "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?q=80&w=800&auto=format&fit=crop"
-    },
-    {
-      name: "Susu Ultra Milk Coklat 250ml",
-      price: 6000,
-      category: "Minuman",
-      stock: 45,
-      description: "Susu UHT rasa coklat lezat yang kaya akan nutrisi dan vitamin.",
-      image_url: "https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=800&auto=format&fit=crop" // chocolate milk
-    },
-    {
-      name: "Beras Mentik Wangi Premium 5kg",
-      price: 75000,
-      category: "Sembako",
-      stock: 15,
-      description: "Beras premium kualitas super tanpa pemutih dan pengawet. Menghasilkan nasi yang pulen dan wangi.",
-      image_url: "https://images.unsplash.com/photo-1586201375761-83865001e8ac?q=80&w=800&auto=format&fit=crop" // bowl of rice
-    },
-    {
-      name: "Minyak Goreng Bimoli 2L",
-      price: 35000,
-      category: "Sembako",
-      stock: 30,
-      description: "Minyak goreng kelapa sawit berkualitas tinggi, menghasilkan gorengan yang lebih krispi dan sehat.",
-      image_url: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=800&auto=format&fit=crop" // oil
-    },
-    {
-      name: "Telur Ayam Negeri 1kg",
-      price: 28000,
-      category: "Sembako",
-      stock: 10,
-      description: "Telur ayam negeri segar langsung dari peternakan. Kaya protein, cocok untuk kebutuhan dapur sehari-hari.",
-      image_url: "https://images.unsplash.com/photo-1587486913049-53fc88980fdc?q=80&w=800&auto=format&fit=crop" // eggs
-    },
-    {
-      name: "Gula Pasir Gulaku 1kg",
-      price: 16000,
-      category: "Sembako",
-      stock: 40,
-      description: "Gula pasir putih bersih dan manis murni. Pas untuk membuat teh, kopi, maupun aneka kue.",
-      image_url: "https://images.unsplash.com/photo-1581428982868-e410dd4fcfa3?q=80&w=800&auto=format&fit=crop" // sugar
-    }
-  ];
-
-  for (const dummy of dummies) {
-    await addDoc(collection(db, "products"), dummy);
-    console.log("Added", dummy.name);
+  // 1. Delete all existing products in Firestore
+  const existingSnap = await getDocs(collection(db, "products"));
+  console.log(`Found ${existingSnap.docs.length} old/dummy products in Firestore. Deleting...`);
+  if (existingSnap.docs.length > 0) {
+    await chunkedDelete(existingSnap.docs);
   }
 
-  console.log("Finished updating database.");
+  // 2. Upload all 433 products from LIST.xlsx
+  await chunkedInsert(products);
+
+  // 3. Verify count in Firestore
+  const verifySnap = await getDocs(collection(db, "products"));
+  console.log(`=== SELESAI! Total produk aktif di Firestore sekarang: ${verifySnap.docs.length} ===`);
   process.exit(0);
 }
 
-run().catch(console.error);
+run().catch((err) => {
+  console.error("Migration error:", err);
+  process.exit(1);
+});

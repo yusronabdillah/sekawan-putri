@@ -1,36 +1,13 @@
 import React from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 
-import SosisIcon from '../assets/placeholders/Sosis.svg';
-import NuggetIcon from '../assets/placeholders/Nugget.svg';
-import BaksoIcon from '../assets/placeholders/Bakso.svg';
-import SeafoodIcon from '../assets/placeholders/Seafood.svg';
-import DagingIcon from '../assets/placeholders/Daging.svg';
-import DumplingIcon from '../assets/placeholders/Dumpling.svg';
-import RotiIcon from '../assets/placeholders/Roti.svg';
-import SayuranIcon from '../assets/placeholders/Sayuran.svg';
-import DefaultIcon from '../assets/placeholders/Default.svg';
-
-const getPlaceholder = (category) => {
-  const cat = category?.toLowerCase() || '';
-  if (cat.includes('sosis')) return SosisIcon;
-  if (cat.includes('nugget')) return NuggetIcon;
-  if (cat.includes('bakso')) return BaksoIcon;
-  if (cat.includes('seafood') || cat.includes('ikan')) return SeafoodIcon;
-  if (cat.includes('daging') || cat.includes('beef')) return DagingIcon;
-  if (cat.includes('dumpling') || cat.includes('dimsum')) return DumplingIcon;
-  if (cat.includes('roti') || cat.includes('pao')) return RotiIcon;
-  if (cat.includes('sayur') || cat.includes('kentang')) return SayuranIcon;
-  return DefaultIcon;
-};
-
 export default function ProductCard({ product, onAdd }) {
   const isOutOfStock = product.stock <= 0;
   const isLowStock = product.stock <= 10 && product.stock > 0;
-  const imageSrc = product.image_url || getPlaceholder(product.category);
+  const hasImage = Boolean(product.image_url && product.image_url.trim() !== '');
 
-  const hasDiscount = product.discount > 0 && product.category !== 'Sayur';
-  const discountedPrice = hasDiscount ? product.price - (product.price * (product.discount / 100)) : product.price;
+  const hasDiscount = product.discount > 0 && product.price > 0;
+  const discountedPrice = hasDiscount ? product.price - (product.price * (product.discount / 100)) : (product.price || 0);
 
   const handleAdd = () => {
     if (isOutOfStock) return;
@@ -60,22 +37,17 @@ export default function ProductCard({ product, onAdd }) {
              </span>
           )}
         </div>
-        <img 
-          src={imageSrc} 
-          alt={product.name} 
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-          onError={(e) => {
-            e.target.style.opacity = 0;
-            e.target.nextSibling.style.display = 'flex';
-          }}
-          onLoad={(e) => {
-            e.target.style.opacity = 1;
-            e.target.nextSibling.style.display = 'none';
-          }}
-        />
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'none', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-          <ImageIcon size={32} />
-        </div>
+        {hasImage ? (
+          <img 
+            src={product.image_url} 
+            alt={product.name} 
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        ) : (
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', backgroundColor: '#f1f5f9' }}>
+            <ImageIcon size={32} />
+          </div>
+        )}
         
         {isOutOfStock && (
           <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.5)' }}></div>
@@ -99,10 +71,10 @@ export default function ProductCard({ product, onAdd }) {
             </span>
           )}
           <div style={{ fontWeight: '700', color: hasDiscount ? 'var(--danger)' : 'var(--primary)', fontSize: '15px' }}>
-            {product.category === 'Sayur' ? (
-              <span style={{ fontSize: '13px', fontStyle: 'italic', color: 'var(--text-muted)' }}>Input Manual</span>
-            ) : (
+            {product.price > 0 ? (
               `Rp ${discountedPrice.toLocaleString('id-ID')}`
+            ) : (
+              <span style={{ fontSize: '13px', fontStyle: 'italic', color: 'var(--text-muted)' }}>Input Manual</span>
             )}
           </div>
         </div>

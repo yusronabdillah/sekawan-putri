@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
 import { useCartStore, useCategoryStore, useAuthStore } from '../store/store';
 import ProductCard from '../components/ProductCard';
@@ -9,8 +10,12 @@ import { AppDialog, AppInput, AppCombobox, AppButton, PageHeader } from '../comp
 import CustomSelect from '../components/CustomSelect';
 
 export default function POS() {
-  const [allProducts, setAllProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const liveProducts = useLiveQuery(() => db.products.toArray(), null);
+  const isLoading = liveProducts === null;
+  const allProducts = useMemo(() => {
+    if (!liveProducts) return [];
+    return [...liveProducts].sort((a, b) => (a.sku || a.id || '').localeCompare(b.sku || b.id || ''));
+  }, [liveProducts]);
   const [search, setSearch] = useState('');
   const { user } = useAuthStore();
   
@@ -25,21 +30,10 @@ export default function POS() {
   const { categories, parentMapping = {} } = useCategoryStore();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isCartSheetOpen, setIsCartSheetOpen] = useState(false);
-  const [sayurModal, setSayurModal] = useState({ isOpen: false, product: null, qty: '1', price: '', unit: 'Kg' });
+  const [sayurModal, setSayurModal] = useState({ isOpen: false, product: null, qty: '1', price: '', unit: 'Pcs' });
   
   const { cart, addToCart, clearCart, getTotal } = useCartStore();
   const total = getTotal();
-
-  useEffect(() => {
-    // Load all products from Dexie once
-    const loadProducts = async () => {
-      setIsLoading(true);
-      const data = await db.products.toArray();
-      setAllProducts(data);
-      setIsLoading(false);
-    };
-    loadProducts();
-  }, []);
 
   const products = useMemo(() => {
     let data = allProducts;
@@ -63,7 +57,7 @@ export default function POS() {
       );
     }
     return data;
-  }, [search, filterCategory, parentCategory, allProducts]);
+  }, [search, filterCategory, parentCategory, allProducts, categories, parentMapping]);
 
   // Handle Edit Pesanan from Checkout Modal
   const handleEditPesanan = () => {
@@ -77,7 +71,9 @@ export default function POS() {
   };
 
   const handleProductClick = (product) => {
-    if (product.category === 'Sayur') {
+    if (!product.price || product.price <= 0) {
+      setSayurModal({ isOpen: true, product, qty: '1', price: '', unit: product.unit || 'Pcs' });
+    } else if (['Sayur', 'Buah', 'Bumbu Dapur'].includes(product.category) && product.unit === 'Kg') {
       setSayurModal({ isOpen: true, product, qty: '1', price: product.price.toString(), unit: 'Kg' });
     } else {
       addToCart(product);
@@ -87,29 +83,38 @@ export default function POS() {
   const handleSayurSubmit = () => {
     if (!sayurModal.product) return;
     let qtyNum = parseFloat(sayurModal.qty);
-    const priceNum = parseInt(sayurModal.price.replace(/\D/g, ''), 10);
-    if (!isNaN(qtyNum) && !isNaN(priceNum)) {
-      // Normalize qty to Kg based on the selected unit for accurate item count (e.g., 500 Gram -> 0.5 Kg)
-      if (sayurModal.unit === 'Gram') {
-        qtyNum = qtyNum / 1000;
-      } else if (sayurModal.unit === 'Ons') {
-        qtyNum = qtyNum / 10;
+    const priceNum = parseInt(String(sayurModal.price).replace(/\D/g, ''), 10);
+    if (!isNaN(qtyNum) && qtyNum > 0 && !isNaN(priceNum) && priceNum > 0) {
+      if (sayurModal.product.price > 0 && (sayurModal.unit === 'Kg' || sayurModal.unit === 'Ons' || sayurModal.unit === 'Gram')) {
+        if (sayurModal.unit === 'Gram') {
+          qtyNum = qtyNum / 1000;
+        } else if (sayurModal.unit === 'Ons') {
+          qtyNum = qtyNum / 10;
+        }
+        const customProduct = { ...sayurModal.product, price: sayurModal.product.price }; 
+        addToCart(customProduct, qtyNum, sayurModal.unit);
+      } else {
+        // Manual price input for products with price === 0
+        const effectiveUnitPrice = Math.round(priceNum / qtyNum);
+        const customProduct = { ...sayurModal.product, price: effectiveUnitPrice };
+        addToCart(customProduct, qtyNum, sayurModal.unit);
       }
-
-      // customProduct price remains the base price per Kg, because the cart total uses (price * qty)
-      const customProduct = { ...sayurModal.product, price: sayurModal.product.price }; 
-      addToCart(customProduct, qtyNum, sayurModal.unit);
-      setSayurModal({ isOpen: false, product: null, qty: '1', price: '', unit: 'Kg' });
+      setSayurModal({ isOpen: false, product: null, qty: '1', price: '', unit: 'Pcs' });
     }
   };
 
   const handleSayurUnitChange = (newUnit, newQty) => {
     if (!sayurModal.product) return;
     const qty = parseFloat(newQty || 0);
-    let basePricePerKg = sayurModal.product.price;
+    let basePricePerKg = sayurModal.product.price || 0;
     
+    if (basePricePerKg <= 0) {
+      setSayurModal({ ...sayurModal, unit: newUnit, qty: newQty });
+      return;
+    }
+
     let calculatedPrice = 0;
-    if (newUnit === 'Kg') calculatedPrice = basePricePerKg * qty;
+    if (newUnit === 'Kg' || newUnit === 'Pcs') calculatedPrice = basePricePerKg * qty;
     else if (newUnit === 'Ons') calculatedPrice = (basePricePerKg / 10) * qty;
     else if (newUnit === 'Gram') calculatedPrice = (basePricePerKg / 1000) * qty;
 
@@ -121,7 +126,7 @@ export default function POS() {
       <AppDialog 
         isOpen={sayurModal.isOpen} 
         onClose={() => setSayurModal({ ...sayurModal, isOpen: false })}
-        title={`Hitung Otomatis: ${sayurModal.product?.name}`}
+        title={`Input Pesanan: ${sayurModal.product?.name}`}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
@@ -130,6 +135,7 @@ export default function POS() {
               value={sayurModal.unit} 
               onChange={val => handleSayurUnitChange(val, sayurModal.qty)}
               options={[
+                { value: 'Pcs', label: 'Pcs / Pack' },
                 { value: 'Kg', label: 'Kg' },
                 { value: 'Ons', label: 'Ons' },
                 { value: 'Gram', label: 'Gram' }
@@ -145,17 +151,17 @@ export default function POS() {
               step="any"
               value={sayurModal.qty} 
               onChange={e => handleSayurUnitChange(sayurModal.unit, e.target.value)} 
-              placeholder="Contoh: 0.5" 
+              placeholder="Contoh: 1" 
             />
           </div>
           <div>
-            <label className="form-label">Total Harga (Otomatis) Rp</label>
+            <label className="form-label">Total Harga (Rp)</label>
             <AppInput 
               type="text" 
               inputMode="numeric"
-              value={sayurModal.price ? Number(sayurModal.price).toLocaleString('id-ID') : ''} 
-              disabled={true}
-              placeholder="Otomatis terhitung" 
+              value={sayurModal.price ? Number(String(sayurModal.price).replace(/\D/g, '') || 0).toLocaleString('id-ID') : ''} 
+              onChange={e => setSayurModal({ ...sayurModal, price: e.target.value.replace(/\D/g, '') })}
+              placeholder="Masukkan nominal harga (Rp)" 
             />
           </div>
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '16px' }}>
