@@ -31,6 +31,7 @@ export default function POS() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isCartSheetOpen, setIsCartSheetOpen] = useState(false);
   const [sayurModal, setSayurModal] = useState({ isOpen: false, product: null, qty: '1', price: '', unit: 'Pcs' });
+  const [isScannerSimulatorOpen, setIsScannerSimulatorOpen] = useState(false);
   
   const { cart, addToCart, clearCart, getTotal } = useCartStore();
   const total = getTotal();
@@ -340,6 +341,130 @@ export default function POS() {
         </div>
       </AppDialog>
 
+      {/* SIMULATOR SCANNER CLABEL T27H MODAL */}
+      <AppDialog
+        isOpen={isScannerSimulatorOpen}
+        onClose={() => setIsScannerSimulatorOpen(false)}
+        title="Uji Coba & Simulasi Scanner Barcode Clabel T27H"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ backgroundColor: 'rgba(34, 197, 94, 0.08)', padding: '12px 16px', borderRadius: '12px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#15803d', fontWeight: '700', marginBottom: '4px' }}>
+              <Barcode size={18} />
+              <span>Cara Kerja Scanner Clabel T27H</span>
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+              Scanner Clabel T27H terhubung via kabel USB dan bekerja seperti keyboard otomatis. Begitu barcode produk dihadapkan ke scanner, alat ini mengetik barcode secepat kilat lalu menekan tombol <strong>Enter</strong>, sehingga barang langsung masuk ke keranjang kasir.
+            </p>
+          </div>
+
+          <div>
+            <h4 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '8px', color: 'var(--text-main)' }}>
+              1. Tes Cepat 1-Klik (Simulasikan Scan Produk):
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button 
+                type="button" 
+                style={{ 
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface)', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '13.5px', fontWeight: '600'
+                }}
+                onClick={() => {
+                  setIsScannerSimulatorOpen(false);
+                  handleBarcodeScan('SKW00423');
+                }}
+              >
+                <span>🌭 Sosis Champ 1kg (Rp 47.000)</span>
+                <code style={{ fontSize: '12px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px' }}>SKW00423 [Scan]</code>
+              </button>
+
+              <button 
+                type="button" 
+                style={{ 
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface)', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '13.5px', fontWeight: '600'
+                }}
+                onClick={() => {
+                  setIsScannerSimulatorOpen(false);
+                  handleBarcodeScan('SKW00400');
+                }}
+              >
+                <span>🍗 Nugget Kanzler Crispy 450gr (Rp 45.000)</span>
+                <code style={{ fontSize: '12px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px' }}>SKW00400 [Scan]</code>
+              </button>
+
+              <button 
+                type="button" 
+                style={{ 
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface)', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '13.5px', fontWeight: '600'
+                }}
+                onClick={() => {
+                  setIsScannerSimulatorOpen(false);
+                  handleBarcodeScan('SKW00349');
+                }}
+              >
+                <span>🦀 Cedea Crabstick 250gr (Rp 18.000)</span>
+                <code style={{ fontSize: '12px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px' }}>SKW00349 [Scan]</code>
+              </button>
+
+              <button 
+                type="button" 
+                style={{ 
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface)', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '13.5px', fontWeight: '600'
+                }}
+                onClick={() => {
+                  setIsScannerSimulatorOpen(false);
+                  handleBarcodeScan('SKW00002');
+                }}
+              >
+                <span>🥢 Tahu Putih (Rp 3.000)</span>
+                <code style={{ fontSize: '12px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px' }}>SKW00002 [Scan]</code>
+              </button>
+
+              <button 
+                type="button" 
+                style={{ 
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '10px 14px', borderRadius: '8px', border: '1px solid #fecaca',
+                  backgroundColor: '#fef2f2', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '13.5px', fontWeight: '600', color: '#991b1b'
+                }}
+                onClick={() => {
+                  setIsScannerSimulatorOpen(false);
+                  handleBarcodeScan('9999999999999');
+                }}
+              >
+                <span>⚠️ Uji Barcode Tidak Dikenal (Bunyi Error)</span>
+                <code style={{ fontSize: '12px', backgroundColor: '#fee2e2', color: '#991b1b', padding: '2px 8px', borderRadius: '4px' }}>9999999999999</code>
+              </button>
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
+            <h4 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '6px', color: 'var(--text-main)' }}>
+              2. Tes Menggunakan Keyboard Laptop/PC:
+            </h4>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+              Ketik kode SKU (contoh: <code>SKW00423</code>) di kolom pencarian atau langsung saat berada di halaman kasir, lalu tekan tombol <strong>Enter</strong>. Sistem akan membunyikan suara beep register dan memasukkannya ke keranjang belanja!
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+            <AppButton onClick={() => setIsScannerSimulatorOpen(false)}>Tutup</AppButton>
+          </div>
+        </div>
+      </AppDialog>
+
       <div className="flex flex-col page-transition">
         <div style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'var(--background)', margin: '-16px -16px 16px -16px', padding: '16px 16px 0 16px' }}>
           <PageHeader 
@@ -349,25 +474,29 @@ export default function POS() {
             actions={
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                  <div 
+                  <button
+                    type="button"
+                    onClick={() => setIsScannerSimulatorOpen(true)}
                     style={{ 
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: '6px', 
                       backgroundColor: 'rgba(34, 197, 94, 0.12)', 
                       color: '#15803d', 
-                      padding: '4px 10px', 
+                      padding: '4px 12px', 
                       borderRadius: '100px', 
                       border: '1px solid rgba(34, 197, 94, 0.25)', 
                       fontSize: '12px', 
-                      fontWeight: '600' 
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
                     }}
-                    title="Scanner Barcode Meja Clabel T27H Siap: Arahkan barcode produk ke scanner, otomatis masuk ke keranjang"
+                    title="Klik untuk membuka Simulator & Panduan Barcode Clabel T27H"
                   >
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block', boxShadow: '0 0 6px #22c55e' }}></span>
                     <Barcode size={14} />
-                    <span>Clabel T27H Siap Scan</span>
-                  </div>
+                    <span>Clabel T27H (Tes Scan &rarr;)</span>
+                  </button>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'var(--primary-light)', padding: '4px 10px', borderRadius: '100px', border: '1px solid rgba(74, 29, 36, 0.1)' }}>
                     <User size={14} color="var(--primary)" />
                     <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--primary)' }}>Kasir: {user?.username || user?.name || 'Admin'}</span>
