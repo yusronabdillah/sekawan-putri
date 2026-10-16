@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
 import { useCartStore, useCategoryStore, useAuthStore } from '../store/store';
 import ProductCard from '../components/ProductCard';
 import CheckoutModal from '../components/CheckoutModal';
 import CartBottomSheet from '../components/CartBottomSheet';
-import { Search, ShoppingBag, X, ShoppingCart, RefreshCw, User, Calendar } from 'lucide-react';
+import { Search, ShoppingBag, X, ShoppingCart, RefreshCw, User, Calendar, Barcode } from 'lucide-react';
 import { AppDialog, AppInput, AppCombobox, AppButton, PageHeader } from '../components/ui';
 import CustomSelect from '../components/CustomSelect';
 
@@ -34,6 +34,148 @@ export default function POS() {
   
   const { cart, addToCart, clearCart, getTotal } = useCartStore();
   const total = getTotal();
+
+  // Scanner state & refs
+  const [toast, setToast] = useState(null);
+  const searchInputRef = useRef(null);
+  const barcodeBufferRef = useRef('');
+  const lastKeyTimeRef = useRef(0);
+
+  // Audio feedback for scanner
+  const playScannerSound = (type = 'success') => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'success') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1760, ctx.currentTime);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.09);
+      } else {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(280, ctx.currentTime);
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.18);
+      }
+    } catch (e) {
+      console.warn("Audio scanner error:", e);
+    }
+  };
+
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  // Handle scanned barcode from Clabel T27H or Enter key
+  const handleBarcodeScan = (rawCode) => {
+    if (!rawCode) return;
+    const code = String(rawCode).trim();
+    if (!code) return;
+
+    const lowerCode = code.toLowerCase();
+
+    // 1. Exact match on barcode, sku, or id
+    const found = allProducts.find(p => 
+      (p.barcode && String(p.barcode).trim().toLowerCase() === lowerCode) ||
+      (p.sku && String(p.sku).trim().toLowerCase() === lowerCode) ||
+      (p.id && String(p.id).trim().toLowerCase() === lowerCode)
+    );
+
+    if (found) {
+      playScannerSound('success');
+      handleProductClick(found);
+      setToast({
+        type: 'success',
+        message: `${found.name} (Rp ${(found.price || 0).toLocaleString('id-ID')}) masuk keranjang`,
+        timestamp: Date.now()
+      });
+      setSearch('');
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 50);
+    } else {
+      playScannerSound('error');
+      setToast({
+        type: 'error',
+        message: `Barcode "${code}" tidak ditemukan dalam sistem`,
+        timestamp: Date.now()
+      });
+    }
+  };
+
+  // Global Keydown Listener for Clabel T27H Auto-Scanning
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      // Don't intercept if modal is open
+      if (sayurModal.isOpen || isCheckoutOpen) return;
+
+      const activeEl = document.activeElement;
+      const isInputActive = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+
+      // Handled by search input's onKeyDown if currently typing in search
+      if (isInputActive && activeEl === searchInputRef.current) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (search.trim()) {
+            handleBarcodeScan(search.trim());
+          }
+        }
+        return;
+      }
+
+      // Ignore if typing in another input
+      if (isInputActive && activeEl !== searchInputRef.current) {
+        return;
+      }
+
+      const now = Date.now();
+      const timeDiff = now - lastKeyTimeRef.current;
+      lastKeyTimeRef.current = now;
+
+      if (e.key === 'Enter') {
+        if (barcodeBufferRef.current.length > 2) {
+          e.preventDefault();
+          const scanned = barcodeBufferRef.current;
+          barcodeBufferRef.current = '';
+          handleBarcodeScan(scanned);
+        }
+        return;
+      }
+
+      // Scanner keystrokes are < 120ms apart; if longer, reset
+      if (timeDiff > 120) {
+        barcodeBufferRef.current = '';
+      }
+
+      if (e.key.length === 1) {
+        barcodeBufferRef.current += e.key;
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [allProducts, sayurModal.isOpen, isCheckoutOpen, search]);
+
+  // Keep search input focused for hands-free scanning
+  useEffect(() => {
+    if (!isCheckoutOpen && !sayurModal.isOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [isCheckoutOpen, sayurModal.isOpen]);
 
   const products = useMemo(() => {
     let data = allProducts;
@@ -123,6 +265,33 @@ export default function POS() {
 
   return (
     <>
+      {/* SCANNER FLOATING TOAST NOTIFICATION */}
+      {toast && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: toast.type === 'success' ? '#15803d' : '#b91c1c',
+            color: '#ffffff',
+            padding: '10px 20px',
+            borderRadius: '100px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            fontWeight: '600',
+            pointerEvents: 'none',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <Barcode size={18} />
+          <span>{toast.message}</span>
+        </div>
+      )}
       <AppDialog 
         isOpen={sayurModal.isOpen} 
         onClose={() => setSayurModal({ ...sayurModal, isOpen: false })}
@@ -179,9 +348,30 @@ export default function POS() {
             icon={ShoppingCart} 
             actions={
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'var(--primary-light)', padding: '4px 10px', borderRadius: '100px', border: '1px solid rgba(74, 29, 36, 0.1)' }}>
-                  <User size={14} color="var(--primary)" />
-                  <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--primary)' }}>Kasir: {user?.username || user?.name || 'Admin'}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <div 
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '6px', 
+                      backgroundColor: 'rgba(34, 197, 94, 0.12)', 
+                      color: '#15803d', 
+                      padding: '4px 10px', 
+                      borderRadius: '100px', 
+                      border: '1px solid rgba(34, 197, 94, 0.25)', 
+                      fontSize: '12px', 
+                      fontWeight: '600' 
+                    }}
+                    title="Scanner Barcode Meja Clabel T27H Siap: Arahkan barcode produk ke scanner, otomatis masuk ke keranjang"
+                  >
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block', boxShadow: '0 0 6px #22c55e' }}></span>
+                    <Barcode size={14} />
+                    <span>Clabel T27H Siap Scan</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'var(--primary-light)', padding: '4px 10px', borderRadius: '100px', border: '1px solid rgba(74, 29, 36, 0.1)' }}>
+                    <User size={14} color="var(--primary)" />
+                    <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--primary)' }}>Kasir: {user?.username || user?.name || 'Admin'}</span>
+                  </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)' }}>
                   <Calendar size={14} />
@@ -253,13 +443,22 @@ export default function POS() {
           <div className="search-bar" style={{ marginBottom: '16px' }}>
             <Search size={20} color="var(--text-muted)" />
             <input 
+              ref={searchInputRef}
               type="text" 
-              placeholder="Cari produk atau scan barcode..." 
+              placeholder="Cari nama produk atau scan barcode (Clabel T27H)..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (search.trim()) {
+                    handleBarcodeScan(search.trim());
+                  }
+                }
+              }}
               autoFocus
             />
-            {search && <X size={20} color="var(--text-muted)" onClick={() => setSearch('')} style={{cursor:'pointer'}}/>}
+            {search && <X size={20} color="var(--text-muted)" onClick={() => { setSearch(''); searchInputRef.current?.focus(); }} style={{cursor:'pointer'}}/>}
           </div>
         </div>
 
