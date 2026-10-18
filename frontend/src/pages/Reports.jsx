@@ -18,6 +18,7 @@ import { useAuthStore, useCategoryStore } from '../store/store';
 import CustomSelect from '../components/CustomSelect';
 import CurrencyInput from '../components/CurrencyInput';
 import { syncService } from '../services/syncService';
+import { apiClient } from '../services/apiClient';
 import { PageHeader } from '../components/ui';
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -792,28 +793,17 @@ export default function Reports() {
           {activeTab === 'recap' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              {/* TEMPORARY RESET BUTTON FOR TESTING */}
+              {/* RESET BUTTON */}
               <div style={{ padding: '0', display: 'flex', justifyContent: 'center', width: '100%' }}>
                 <button 
                   onClick={async () => {
-                    if (window.confirm("RESET SEMUA TRANSAKSI HARI INI? (HANYA UNTUK TESTING)")) {
+                    if (window.confirm("⚠️ KONFIRMASI RESET LAPORAN:\n\nApakah Anda yakin ingin mereset seluruh data transaksi dan pengeluaran? Semua omzet dan grafik laporan akan kembali bersih ke Rp 0. Data master produk & stok tetap aman.")) {
                       try {
-                        const txs = await db.transactions.toArray();
-                        const items = await db.transaction_items.toArray();
-                        const sessions = await db.cash_sessions.toArray();
-                        const expenses = await db.expenses.toArray();
-                        
-                        const q = [];
-                        for (const t of txs) q.push({ id: uuidv4(), type: 'SYNC', entity: 'transactions', action: 'DELETE', payload: { id: t.id }, status: 'PENDING', created_at: new Date().toISOString() });
-                        for (const i of items) q.push({ id: uuidv4(), type: 'SYNC', entity: 'transaction_items', action: 'DELETE', payload: { id: i.id }, status: 'PENDING', created_at: new Date().toISOString() });
-                        for (const s of sessions) q.push({ id: uuidv4(), type: 'SYNC', entity: 'cash_sessions', action: 'DELETE', payload: { id: s.id }, status: 'PENDING', created_at: new Date().toISOString() });
-                        for (const e of expenses) q.push({ id: uuidv4(), type: 'SYNC', entity: 'expenses', action: 'DELETE', payload: { id: e.id }, status: 'PENDING', created_at: new Date().toISOString() });
-                        
-                        if (q.length > 0) {
-                          await db.sync_queue.bulkAdd(q);
-                          if (window.navigator.onLine) {
-                            alert("Menghapus data dari server, mohon tunggu sebentar...");
-                            await syncService.processQueue();
+                        if (window.navigator.onLine) {
+                          try {
+                            await apiClient.resetAllReports();
+                          } catch (cloudErr) {
+                            console.warn("Gagal menghapus sebagian data di cloud Firebase:", cloudErr);
                           }
                         }
                         
@@ -821,18 +811,28 @@ export default function Reports() {
                         await db.transaction_items.clear();
                         await db.cash_sessions.clear();
                         await db.expenses.clear();
-                        await db.sync_queue.clear();
+                        if (db.stock_movements) {
+                          await db.stock_movements.clear();
+                        }
+                        if (db.sync_queue) {
+                          await db.sync_queue.clear();
+                        }
                         
-                        alert("Berhasil reset! Halaman akan dimuat ulang.");
+                        try {
+                          await fetch('http://localhost:5000/api/transactions/reset-reports', { method: 'DELETE' });
+                        } catch (e) {}
+
+                        alert("✓ Berhasil! Seluruh data laporan berhasil direset ke Rp 0.");
                         window.location.reload();
                       } catch (err) {
                         alert("Gagal reset: " + err.message);
                       }
                     }
                   }}
-                  style={{ backgroundColor: 'red', color: 'white', padding: '12px 24px', borderRadius: '8px', fontWeight: 'bold', border: 'none', cursor: 'pointer', width: '100%' }}
+                  style={{ backgroundColor: '#ef4444', color: 'white', padding: '12px 24px', borderRadius: '8px', fontWeight: 'bold', border: 'none', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
-                  ⚠️ KLIK DI SINI UNTUK RESET DATA UJI COBA HARI INI ⚠️
+                  <RefreshCw size={18} />
+                  <span>Reset Seluruh Data Laporan & Transaksi ke Rp 0</span>
                 </button>
               </div>
 

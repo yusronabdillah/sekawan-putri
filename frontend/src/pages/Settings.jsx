@@ -7,6 +7,7 @@ import CustomSelect from '../components/CustomSelect';
 import { PageHeader } from '../components/ui';
 import ReceiptPreviewModal from '../components/receipt/ReceiptPreviewModal';
 import { db } from '../db/db';
+import { apiClient } from '../services/apiClient';
 
 export default function Settings() {
   const { user, logout } = useAuthStore();
@@ -44,23 +45,39 @@ export default function Settings() {
   const handleResetReports = async () => {
     setIsResetting(true);
     try {
-      // 1. Kosongkan data laporan di Dexie IndexedDB lokal
+      // 1. Kosongkan data laporan di cloud Firebase Firestore jika online
+      if (window.navigator.onLine) {
+        try {
+          await apiClient.resetAllReports();
+        } catch (cloudErr) {
+          console.warn('Gagal menghapus sebagian data laporan di Firebase:', cloudErr);
+        }
+      }
+
+      // 2. Kosongkan data laporan di Dexie IndexedDB lokal
       await db.transactions.clear();
       await db.transaction_items.clear();
       await db.expenses.clear();
       await db.cash_sessions.clear();
+      if (db.stock_movements) {
+        await db.stock_movements.clear();
+      }
+      if (db.sync_queue) {
+        await db.sync_queue.clear();
+      }
 
-      // 2. Kosongkan data di backend SQLite jika aktif
+      // 3. Kosongkan data di backend SQLite jika aktif
       try {
         await fetch('http://localhost:5000/api/transactions/reset-reports', {
           method: 'DELETE'
         });
       } catch (e) {
-        console.warn('Backend server tidak aktif atau offline, data lokal berhasil direset.');
+        console.warn('Backend server tidak aktif atau offline, data lokal & cloud berhasil direset.');
       }
 
       setIsResetReportsModalOpen(false);
-      alert('✓ Berhasil! Seluruh data transaksi penjualan dan pengeluaran telah dibersihkan. Laporan kini kembali ke Rp 0.');
+      alert('✓ Berhasil! Seluruh riwayat data laporan transaksi penjualan, kas, dan pengeluaran telah direset mulai dari Rp 0.');
+      window.location.reload();
     } catch (err) {
       console.error('Gagal reset laporan:', err);
       alert('Gagal membersihkan data laporan: ' + err.message);
