@@ -326,6 +326,23 @@ export default function Settings() {
           </div>
 
           <div className="form-group">
+            <label className="form-label" style={{ fontWeight: '600' }}>Metode Pencetakan</label>
+            <CustomSelect 
+              value={printerConfig.printMethod || 'browser'} 
+              onChange={(val) => updatePrinterConfig({ printMethod: val })}
+              options={[
+                { value: 'browser', label: '🖥️ Standar Browser (Cocok untuk Laptop / Komputer Windows)' },
+                { value: 'rawbt', label: '📱 Direct RawBT Android (Cepat & Langsung Cetak untuk Redmi Pad / Tablet)' }
+              ]}
+            />
+            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+              {printerConfig.printMethod === 'rawbt' 
+                ? '⚡ Mode RawBT aktif: Struk langsung terkirim ke printer via RawBT tanpa pop-up preview browser.' 
+                : 'ℹ️ Mode Browser aktif: Menggunakan jendela dialog cetak standar Windows/Browser.'}
+            </p>
+          </div>
+
+          <div className="form-group">
             <label className="form-label">Ukuran Kertas</label>
             <CustomSelect 
               value={printerConfig.paperSize} 

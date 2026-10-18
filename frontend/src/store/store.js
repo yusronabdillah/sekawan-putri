@@ -81,6 +81,7 @@ export const usePrinterStore = create(
   persist(
     (set) => ({
       config: {
+        printMethod: 'browser', // 'browser' (Standard PC/Laptop) or 'rawbt' (RawBT Direct Android)
         paperSize: '58', // '58' or '80'
         showLogo: true,
         showAddress: true,

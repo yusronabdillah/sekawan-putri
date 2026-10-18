@@ -15,13 +15,13 @@ export default function ReceiptPreviewModal({ isOpen, onClose, transaction, isNe
     if (isOpen && isNewTransaction && config.autoPrint) {
       // Small delay to ensure render
       setTimeout(() => {
-        PrintManager.printReceipt();
+        PrintManager.printReceipt(transaction, config);
       }, 500);
     }
-  }, [isOpen, isNewTransaction, config.autoPrint]);
+  }, [isOpen, isNewTransaction, config.autoPrint, transaction, config]);
 
   const handlePrint = () => {
-    PrintManager.printReceipt();
+    PrintManager.printReceipt(transaction, config);
   };
 
   const handleDownloadPDF = async () => {
