@@ -4,8 +4,8 @@ import { db } from '../db/db';
 import Modal from '../components/Modal';
 import CustomSelect from '../components/CustomSelect';
 import CurrencyInput from '../components/CurrencyInput';
-import { Plus, Edit2, PackagePlus, FileUp, Upload, X, Search, Image as ImageIcon, Package, Trash2, RefreshCw } from 'lucide-react';
-import { AppDatePicker, AppMonthPicker, PageHeader } from '../components/ui';
+import { Plus, Edit2, PackagePlus, FileUp, Upload, X, Search, Image as ImageIcon, Package, Trash2, RefreshCw, Barcode, Sparkles, AlertCircle } from 'lucide-react';
+import { AppDatePicker, AppMonthPicker, PageHeader, AppDialog, AppButton } from '../components/ui';
 import { v4 as uuidv4 } from 'uuid';
 import Papa from 'papaparse';
 import { useCategoryStore, useAuthStore } from '../store/store';
@@ -30,6 +30,14 @@ export default function Inventory() {
   const [formData, setFormData] = useState({ 
     id: '', name: '', barcode: '', category: 'Frozen Food', price: '', cost_price: '', stock: '', image_url: '', discount: '' 
   });
+  const [barcodeConflict, setBarcodeConflict] = useState(null);
+  const [isScannerSimulatorOpen, setIsScannerSimulatorOpen] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const barcodeBufferRef = useRef('');
+  const lastKeyTimeRef = useRef(0);
+  const searchInputRef = useRef(null);
+  const barcodeInputRef = useRef(null);
 
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [importFile, setImportFile] = useState(null);
@@ -38,6 +46,45 @@ export default function Inventory() {
   
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
+
+  // Audio feedback for scanner
+  const playScannerSound = (type = 'success') => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'success') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1760, ctx.currentTime);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.09);
+      } else {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(280, ctx.currentTime);
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.18);
+      }
+    } catch (e) {
+      console.warn("Audio scanner error:", e);
+    }
+  };
+
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3500);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const filteredProducts = React.useMemo(() => {
     let result = products;
@@ -83,17 +130,194 @@ export default function Inventory() {
     }
   };
 
-  const handleOpenAdd = () => {
+  const handleOpenAdd = (defaultBarcode = '') => {
     setIsEditMode(false);
-    setFormData({ id: '', name: '', barcode: '', category: 'Frozen Food', price: '', cost_price: '0', stock: '', image_url: '', unit: 'Pcs', exp_date: '', discount: '' });
+    setBarcodeConflict(null);
+    const initialBarcode = typeof defaultBarcode === 'string' ? defaultBarcode : '';
+    setFormData({ 
+      id: '', 
+      name: '', 
+      barcode: initialBarcode, 
+      category: 'Frozen Food', 
+      price: '', 
+      cost_price: '0', 
+      stock: '', 
+      image_url: '', 
+      unit: 'Pcs', 
+      exp_date: '', 
+      discount: '' 
+    });
     setIsAddOpen(true);
+
+    if (initialBarcode.trim()) {
+      const lower = initialBarcode.trim().toLowerCase();
+      const existing = products.find(p => 
+        (p.barcode && String(p.barcode).trim().toLowerCase() === lower) ||
+        (p.sku && String(p.sku).trim().toLowerCase() === lower)
+      );
+      if (existing) {
+        setBarcodeConflict(existing);
+      }
+    }
   };
 
   const handleOpenEdit = (p) => {
     setIsEditMode(true);
+    setBarcodeConflict(null);
     setFormData({ ...p });
     setIsAddOpen(true);
   };
+
+  const handleGenerateAutoSKU = () => {
+    let maxNum = 0;
+    products.forEach(p => {
+      const code = p.barcode || p.sku || '';
+      const match = code.match(/^SKW(\d+)$/i);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (num > maxNum) maxNum = num;
+      }
+    });
+    const nextNum = maxNum > 0 ? maxNum + 1 : products.length + 1;
+    const newSKU = `SKW${String(nextNum).padStart(5, '0')}`;
+    setFormData(prev => ({ ...prev, barcode: newSKU }));
+    setBarcodeConflict(null);
+    playScannerSound('success');
+    setToast({
+      type: 'success',
+      message: `Kode SKU Baru dibuat: ${newSKU}`,
+      timestamp: Date.now()
+    });
+  };
+
+  const handleBarcodeScan = (rawCode) => {
+    if (!rawCode) return;
+    const code = String(rawCode).trim();
+    if (!code) return;
+
+    const lowerCode = code.toLowerCase();
+
+    // 1. JIKA FORM TAMBAH / EDIT SEDANG DIBUKA
+    if (isAddOpen) {
+      setFormData(prev => ({ ...prev, barcode: code }));
+      playScannerSound('success');
+
+      // Cek apakah barcode sudah dipakai produk lain
+      const existing = products.find(p => 
+        (p.barcode && String(p.barcode).trim().toLowerCase() === lowerCode) ||
+        (p.sku && String(p.sku).trim().toLowerCase() === lowerCode)
+      );
+
+      if (existing && (!isEditMode || existing.id !== formData.id)) {
+        setBarcodeConflict(existing);
+        setToast({
+          type: 'warning',
+          message: `Barcode "${code}" sudah terdaftar untuk produk "${existing.name}".`,
+          actionText: 'Edit Produk Ini',
+          onAction: () => handleOpenEdit(existing),
+          timestamp: Date.now()
+        });
+      } else {
+        setBarcodeConflict(null);
+        setToast({
+          type: 'success',
+          message: `✓ Barcode "${code}" berhasil dimasukkan ke form`,
+          timestamp: Date.now()
+        });
+      }
+      return;
+    }
+
+    // 2. JIKA DI HALAMAN UTAMA MANAJEMEN STOK (MODAL TUTUP)
+    const found = products.find(p => 
+      (p.barcode && String(p.barcode).trim().toLowerCase() === lowerCode) ||
+      (p.sku && String(p.sku).trim().toLowerCase() === lowerCode) ||
+      (p.id && String(p.id).trim().toLowerCase() === lowerCode)
+    );
+
+    if (found) {
+      playScannerSound('success');
+      setSearch(found.name);
+      setToast({
+        type: 'success',
+        message: `Produk ditemukan: "${found.name}" (Stok: ${found.stock} ${found.unit || 'Pcs'})`,
+        actionText: '✏️ Edit Produk',
+        onAction: () => handleOpenEdit(found),
+        timestamp: Date.now()
+      });
+    } else {
+      playScannerSound('error');
+      setToast({
+        type: 'error',
+        message: `Barcode "${code}" belum terdaftar dalam master produk`,
+        actionText: '➕ Tambah Baru',
+        onAction: () => handleOpenAdd(code),
+        timestamp: Date.now()
+      });
+    }
+  };
+
+  // Global Keydown Listener untuk Clabel T27H Auto-Scanning
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      // Abaikan jika modal import atau simulator sedang aktif
+      if (isImportOpen || isScannerSimulatorOpen) return;
+
+      const activeEl = document.activeElement;
+      const isInputActive = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+
+      // Jika sedang mengetik di kolom pencarian
+      if (isInputActive && activeEl === searchInputRef.current) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (search.trim()) {
+            handleBarcodeScan(search.trim());
+          }
+        }
+        return;
+      }
+
+      // Jika sedang mengetik di kolom barcode dalam modal
+      if (isInputActive && activeEl === barcodeInputRef.current) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (formData.barcode.trim()) {
+            handleBarcodeScan(formData.barcode.trim());
+          }
+        }
+        return;
+      }
+
+      const now = Date.now();
+      const timeDiff = now - lastKeyTimeRef.current;
+      lastKeyTimeRef.current = now;
+
+      if (e.key === 'Enter') {
+        if (barcodeBufferRef.current.length > 2) {
+          e.preventDefault();
+          const scanned = barcodeBufferRef.current;
+          barcodeBufferRef.current = '';
+          handleBarcodeScan(scanned);
+        }
+        return;
+      }
+
+      // Deteksi kecepatan scanner Clabel T27H (< 120ms)
+      if (timeDiff > 120) {
+        barcodeBufferRef.current = '';
+      }
+
+      if (e.key.length === 1) {
+        if (isInputActive && timeDiff > 120) {
+          return;
+        }
+        barcodeBufferRef.current += e.key;
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [isAddOpen, isEditMode, formData, products, search, isImportOpen, isScannerSimulatorOpen]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -277,14 +501,37 @@ export default function Inventory() {
           subtitle={`Total ${products.length} Produk`}
           icon={Package}
           actions={
-            <>
-              <button className="btn btn-secondary" onClick={() => setIsImportOpen(true)} style={{ flex: '1 1 auto', minWidth: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <FileUp size={20} style={{ marginRight: '8px' }} /> Import CSV
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', width: '100%' }}>
+              <button
+                type="button"
+                onClick={() => setIsScannerSimulatorOpen(true)}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '6px', 
+                  backgroundColor: 'rgba(34, 197, 94, 0.12)', 
+                  color: '#15803d', 
+                  padding: '8px 14px', 
+                  borderRadius: 'var(--radius-md, 8px)', 
+                  border: '1px solid rgba(34, 197, 94, 0.3)', 
+                  fontSize: '13px', 
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  flex: '0 0 auto'
+                }}
+                title="Buka Simulator Scan Barcode Clabel T27H"
+              >
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block', boxShadow: '0 0 6px #22c55e' }}></span>
+                <Barcode size={16} />
+                <span>Clabel T27H (Tes Scan &rarr;)</span>
               </button>
-              <button className="btn btn-primary" onClick={handleOpenAdd} style={{ flex: '1 1 auto', minWidth: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Plus size={20} style={{ marginRight: '8px' }} /> Tambah Produk
+              <button className="btn btn-secondary" onClick={() => setIsImportOpen(true)} style={{ flex: '1 1 auto', minWidth: '130px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <FileUp size={18} style={{ marginRight: '6px' }} /> Import CSV
               </button>
-            </>
+              <button className="btn btn-primary" onClick={() => handleOpenAdd()} style={{ flex: '1 1 auto', minWidth: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Plus size={18} style={{ marginRight: '6px' }} /> Tambah Produk
+              </button>
+            </div>
           }
         />
 
@@ -398,10 +645,17 @@ export default function Inventory() {
         <div className="search-bar" style={{ marginBottom: '16px' }}>
           <Search size={20} color="var(--text-muted)" />
           <input 
+            ref={searchInputRef}
             type="text" 
-            placeholder="Cari nama atau barcode..." 
+            placeholder="Cari nama atau scan barcode (Enter)..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && search.trim()) {
+                e.preventDefault();
+                handleBarcodeScan(search.trim());
+              }
+            }}
           />
           {search && <X size={20} color="var(--text-muted)" onClick={() => setSearch('')} style={{cursor:'pointer'}}/>}
         </div>
@@ -522,8 +776,83 @@ export default function Inventory() {
 
           <div className="grid-2" style={{ gap: '16px' }}>
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label">Barcode</label>
-              <input type="text" className="form-input" value={formData.barcode} onChange={e => setFormData({...formData, barcode: e.target.value})} placeholder="Scan atau ketik manual..." />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label className="form-label" style={{ marginBottom: 0 }}>Barcode / SKU</label>
+                <span style={{ fontSize: '11px', color: '#15803d', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600', backgroundColor: 'rgba(34, 197, 94, 0.1)', padding: '2px 8px', borderRadius: '100px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block' }}></span>
+                  Clabel T27H Siap
+                </span>
+              </div>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <input 
+                    ref={barcodeInputRef}
+                    type="text" 
+                    className="form-input" 
+                    value={formData.barcode} 
+                    onChange={e => {
+                      const val = e.target.value;
+                      setFormData(prev => ({...prev, barcode: val}));
+                      if (val.trim()) {
+                        const lower = val.trim().toLowerCase();
+                        const existing = products.find(p => 
+                          (p.barcode && String(p.barcode).trim().toLowerCase() === lower) ||
+                          (p.sku && String(p.sku).trim().toLowerCase() === lower)
+                        );
+                        if (existing && (!isEditMode || existing.id !== formData.id)) {
+                          setBarcodeConflict(existing);
+                        } else {
+                          setBarcodeConflict(null);
+                        }
+                      } else {
+                        setBarcodeConflict(null);
+                      }
+                    }} 
+                    placeholder="Scan Clabel T27H atau ketik..." 
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (formData.barcode.trim()) {
+                          handleBarcodeScan(formData.barcode.trim());
+                        }
+                      }
+                    }}
+                  />
+                </div>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  style={{ padding: '0 10px', fontSize: '12px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  title="Buat kode barcode otomatis jika produk tidak ada barcode pabrik"
+                  onClick={handleGenerateAutoSKU}
+                >
+                  <Sparkles size={14} /> Auto SKU
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  style={{ padding: '0 10px', fontSize: '12px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#15803d', borderColor: 'rgba(34, 197, 94, 0.3)' }}
+                  title="Buka simulator uji scan barcode"
+                  onClick={() => setIsScannerSimulatorOpen(true)}
+                >
+                  <Barcode size={14} /> Tes
+                </button>
+              </div>
+
+              {barcodeConflict && (
+                <div style={{ marginTop: '8px', padding: '8px 12px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', fontSize: '12px', color: '#991b1b', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                  <div>
+                    ⚠️ Barcode sudah dipakai: <strong>{barcodeConflict.name}</strong>
+                  </div>
+                  <button 
+                    type="button"
+                    style={{ backgroundColor: '#991b1b', color: '#fff', border: 'none', borderRadius: '4px', padding: '3px 8px', fontSize: '11px', cursor: 'pointer', fontWeight: '600', whiteSpace: 'nowrap' }}
+                    onClick={() => handleOpenEdit(barcodeConflict)}
+                  >
+                    Edit Produk Tersebut
+                  </button>
+                </div>
+              )}
             </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Harga Modal</label>
@@ -657,6 +986,171 @@ export default function Inventory() {
           </div>
         )}
       </Modal>
+
+      {/* Floating Interactive Toast */}
+      {toast && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          backgroundColor: toast.type === 'error' ? '#991b1b' : toast.type === 'warning' ? '#b45309' : '#15803d',
+          color: '#ffffff',
+          padding: '12px 20px',
+          borderRadius: '50px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+          animation: 'fadeIn 0.2s ease-out',
+          maxWidth: '92vw',
+          fontSize: '13.5px',
+          fontWeight: '500'
+        }}>
+          <span>{toast.message}</span>
+          {toast.actionText && toast.onAction && (
+            <button
+              type="button"
+              onClick={() => {
+                const act = toast.onAction;
+                setToast(null);
+                act();
+              }}
+              style={{
+                backgroundColor: '#ffffff',
+                color: toast.type === 'error' ? '#991b1b' : toast.type === 'warning' ? '#b45309' : '#15803d',
+                border: 'none',
+                borderRadius: '20px',
+                padding: '4px 12px',
+                fontWeight: '700',
+                fontSize: '12px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {toast.actionText}
+            </button>
+          )}
+          <button 
+            type="button"
+            onClick={() => setToast(null)}
+            style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center', opacity: 0.8 }}
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
+      {/* Simulator Modal Clabel T27H */}
+      <AppDialog
+        isOpen={isScannerSimulatorOpen}
+        onClose={() => setIsScannerSimulatorOpen(false)}
+        title="Simulator Scanner Clabel T27H (Manajemen Stok)"
+        maxWidth="540px"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ backgroundColor: 'var(--primary-light)', padding: '12px 14px', borderRadius: '8px', fontSize: '13px', lineHeight: '1.5', color: 'var(--text-main)' }}>
+            <strong>💡 Cara Kerja Scanner Meja Clabel T27H di Manajemen Stok:</strong>
+            <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)' }}>
+              Alat ini bekerja otomatis secara <em>hands-free</em>.
+              {isAddOpen ? (
+                <span style={{ color: '#15803d', fontWeight: '600' }}> Form Tambah/Edit sedang terbuka: hasil scan akan langsung mengisi kolom Barcode produk!</span>
+              ) : (
+                <span> Di halaman stok: produk yang discan akan otomatis dicari dan muncul tombol untuk langsung mengedit stok/harganya.</span>
+              )}
+            </p>
+          </div>
+
+          <div>
+            <h4 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '8px', color: 'var(--text-main)' }}>
+              1. Tes Cepat 1-Klik (Simulasi Scan Produk Nyata):
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button 
+                type="button" 
+                style={{ 
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface)', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '13.5px', fontWeight: '600'
+                }}
+                onClick={() => {
+                  setIsScannerSimulatorOpen(false);
+                  handleBarcodeScan('SKW00423');
+                }}
+              >
+                <span>🌭 Sosis Champ 1kg (Rp 47.000)</span>
+                <code style={{ fontSize: '12px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px' }}>SKW00423 [Scan]</code>
+              </button>
+
+              <button 
+                type="button" 
+                style={{ 
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface)', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '13.5px', fontWeight: '600'
+                }}
+                onClick={() => {
+                  setIsScannerSimulatorOpen(false);
+                  handleBarcodeScan('SKW00400');
+                }}
+              >
+                <span>🍗 Nugget Kanzler Crispy 450gr</span>
+                <code style={{ fontSize: '12px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px' }}>SKW00400 [Scan]</code>
+              </button>
+
+              <button 
+                type="button" 
+                style={{ 
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface)', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '13.5px', fontWeight: '600'
+                }}
+                onClick={() => {
+                  setIsScannerSimulatorOpen(false);
+                  handleBarcodeScan('SKW00349');
+                }}
+              >
+                <span>🦀 Cedea Crabstick 250gr</span>
+                <code style={{ fontSize: '12px', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px' }}>SKW00349 [Scan]</code>
+              </button>
+
+              <button 
+                type="button" 
+                style={{ 
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '10px 14px', borderRadius: '8px', border: '1px solid #fed7aa',
+                  backgroundColor: '#fff7ed', cursor: 'pointer', textAlign: 'left',
+                  fontSize: '13.5px', fontWeight: '600', color: '#c2410c'
+                }}
+                onClick={() => {
+                  setIsScannerSimulatorOpen(false);
+                  handleBarcodeScan('SKW99881');
+                }}
+              >
+                <span>✨ Barcode Baru Belum Terdaftar (Uji Tambah Baru)</span>
+                <code style={{ fontSize: '12px', backgroundColor: '#ffedd5', color: '#c2410c', padding: '2px 8px', borderRadius: '4px' }}>SKW99881 [Baru]</code>
+              </button>
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
+            <h4 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '6px', color: 'var(--text-main)' }}>
+              2. Tes Menggunakan Keyboard Laptop/PC:
+            </h4>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+              Ketik kode barcode di kolom pencarian atau langsung pada kolom Barcode di dalam form Tambah/Edit Produk, lalu tekan tombol <strong>Enter</strong>. Sistem akan membunyikan audio chime kasir dan memproses barcode otomatis!
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+            <AppButton onClick={() => setIsScannerSimulatorOpen(false)}>Tutup</AppButton>
+          </div>
+        </div>
+      </AppDialog>
     </div>
   );
 }
