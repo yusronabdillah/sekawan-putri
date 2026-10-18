@@ -5,9 +5,10 @@ import { useCartStore, useCategoryStore, useAuthStore } from '../store/store';
 import ProductCard from '../components/ProductCard';
 import CheckoutModal from '../components/CheckoutModal';
 import CartBottomSheet from '../components/CartBottomSheet';
-import { Search, ShoppingBag, X, ShoppingCart, RefreshCw, User, Calendar, Barcode } from 'lucide-react';
+import { Search, ShoppingBag, X, ShoppingCart, RefreshCw, User, Calendar, Barcode, Printer } from 'lucide-react';
 import { AppDialog, AppInput, AppCombobox, AppButton, PageHeader } from '../components/ui';
 import CustomSelect from '../components/CustomSelect';
+import ReceiptPreviewModal from '../components/receipt/ReceiptPreviewModal';
 
 export default function POS() {
   const liveProducts = useLiveQuery(() => db.products.toArray(), null);
@@ -32,6 +33,7 @@ export default function POS() {
   const [isCartSheetOpen, setIsCartSheetOpen] = useState(false);
   const [sayurModal, setSayurModal] = useState({ isOpen: false, product: null, qty: '1', price: '', unit: 'Pcs' });
   const [isScannerSimulatorOpen, setIsScannerSimulatorOpen] = useState(false);
+  const [isTestReceiptOpen, setIsTestReceiptOpen] = useState(false);
   
   const { cart, addToCart, clearCart, getTotal } = useCartStore();
   const total = getTotal();
@@ -89,12 +91,23 @@ export default function POS() {
 
     const lowerCode = code.toLowerCase();
 
-    // 1. Exact match on barcode, sku, or id
-    const found = allProducts.find(p => 
+    // 1. Exact match on barcode, sku, id, or product name
+    let found = allProducts.find(p => 
       (p.barcode && String(p.barcode).trim().toLowerCase() === lowerCode) ||
       (p.sku && String(p.sku).trim().toLowerCase() === lowerCode) ||
-      (p.id && String(p.id).trim().toLowerCase() === lowerCode)
+      (p.id && String(p.id).trim().toLowerCase() === lowerCode) ||
+      (p.name && String(p.name).trim().toLowerCase() === lowerCode)
     );
+
+    // 2. Fallback: jika diketik nama produk dan hanya 1 produk yang cocok
+    if (!found) {
+      const matchByName = allProducts.filter(p => 
+        p.name && p.name.toLowerCase().includes(lowerCode)
+      );
+      if (matchByName.length === 1) {
+        found = matchByName[0];
+      }
+    }
 
     if (found) {
       playScannerSound('success');
@@ -112,7 +125,7 @@ export default function POS() {
       playScannerSound('error');
       setToast({
         type: 'error',
-        message: `Barcode "${code}" tidak ditemukan dalam sistem`,
+        message: `Produk / Barcode "${code}" tidak ditemukan dalam sistem`,
         timestamp: Date.now()
       });
     }
@@ -129,7 +142,7 @@ export default function POS() {
 
       // Handled by search input's onKeyDown if currently typing in search
       if (isInputActive && activeEl === searchInputRef.current) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' || e.key === 'Tab') {
           e.preventDefault();
           if (search.trim()) {
             handleBarcodeScan(search.trim());
@@ -147,7 +160,7 @@ export default function POS() {
       const timeDiff = now - lastKeyTimeRef.current;
       lastKeyTimeRef.current = now;
 
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' || e.key === 'Tab') {
         if (barcodeBufferRef.current.length > 2) {
           e.preventDefault();
           const scanned = barcodeBufferRef.current;
@@ -157,8 +170,9 @@ export default function POS() {
         return;
       }
 
-      // Scanner keystrokes are < 120ms apart; if longer, reset
-      if (timeDiff > 120) {
+      // Scanner keystrokes (mendukung USB kabel, Wireless 2.4G, & Bluetooth HID)
+      // Toleransi jeda 220ms untuk mencegah paket karakter bluetooth terputus akibat latency/jitter nirkabel
+      if (timeDiff > 220) {
         barcodeBufferRef.current = '';
       }
 
@@ -363,11 +377,14 @@ export default function POS() {
           <div style={{ backgroundColor: 'rgba(34, 197, 94, 0.08)', padding: '12px 16px', borderRadius: '12px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#15803d', fontWeight: '700', marginBottom: '4px' }}>
               <Barcode size={18} />
-              <span>Cara Kerja Scanner Clabel T27H</span>
+              <span>Cara Kerja Scanner (Kabel USB & Bluetooth HID)</span>
             </div>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
-              Scanner Clabel T27H terhubung via kabel USB dan bekerja seperti keyboard otomatis. Begitu barcode produk dihadapkan ke scanner, alat ini mengetik barcode secepat kilat lalu menekan tombol <strong>Enter</strong>, sehingga barang langsung masuk ke keranjang kasir.
+              Scanner barcode (Clabel T27H, barcode scanner tembak Bluetooth / USB, atau Wireless 2.4G) bekerja otomatis seperti keyboard (Mode HID). Begitu barcode produk di-scan, alat mengetik kode barcode secepat kilat lalu mengirim tombol <strong>Enter</strong>, sehingga barang langsung masuk ke keranjang kasir.
             </p>
+            <div style={{ marginTop: '8px', padding: '8px 12px', backgroundColor: 'rgba(59, 130, 246, 0.08)', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.2)', fontSize: '12px', color: '#1d4ed8' }}>
+              <strong>📱 Mode Bluetooth:</strong> Pastikan scanner disetel ke <em>Bluetooth HID Keyboard mode</em> dan telah di-pairing di setelan Bluetooth Laptop/Tablet/HP kasir. Scanner langsung siap pakai tanpa driver!
+            </div>
           </div>
 
           <div>
@@ -499,11 +516,33 @@ export default function POS() {
                       cursor: 'pointer',
                       transition: 'all 0.2s'
                     }}
-                    title="Klik untuk membuka Simulator & Panduan Barcode Clabel T27H"
+                    title="Scanner Barcode Siap (Kabel USB, Wireless 2.4G & Bluetooth HID). Klik untuk membuka Simulator & Panduan"
                   >
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block', boxShadow: '0 0 6px #22c55e' }}></span>
                     <Barcode size={14} />
-                    <span>Clabel T27H (Tes Scan &rarr;)</span>
+                    <span>Scanner USB / BT (Tes &rarr;)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsTestReceiptOpen(true)}
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '6px', 
+                      backgroundColor: 'rgba(59, 130, 246, 0.1)', 
+                      color: '#1d4ed8', 
+                      padding: '4px 12px', 
+                      borderRadius: '100px', 
+                      border: '1px solid rgba(59, 130, 246, 0.25)', 
+                      fontSize: '12px', 
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    title="Uji coba cetak struk ke printer thermal Iware (58mm/80mm)"
+                  >
+                    <Printer size={14} />
+                    <span>Tes Printer Iware</span>
                   </button>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'var(--primary-light)', padding: '4px 10px', borderRadius: '100px', border: '1px solid rgba(74, 29, 36, 0.1)' }}>
                     <User size={14} color="var(--primary)" />
@@ -701,6 +740,31 @@ export default function POS() {
           cart={cart} 
           total={total} 
           clearCart={clearCart} 
+        />
+      )}
+
+      {/* TEST RECEIPT MODAL FOR IWARE THERMAL PRINTER */}
+      {isTestReceiptOpen && (
+        <ReceiptPreviewModal 
+          isOpen={isTestReceiptOpen}
+          onClose={() => setIsTestReceiptOpen(false)}
+          transaction={{
+            id: `TEST-${Date.now().toString().slice(-4)}`,
+            created_at: new Date().toISOString(),
+            cashier_name: user?.name || user?.username || 'Kasir Toko',
+            payment_method: 'CASH',
+            subtotal: 51000,
+            discount: 0,
+            tax: 0,
+            total_amount: 51000,
+            payment_amount: 100000,
+            change_amount: 49000,
+            items: [
+              { product_name: 'Sosis Champ Sapi 1kg', price: 47000, qty: 1 },
+              { product_name: 'Tahu Putih Segar (Pcs)', price: 4000, qty: 1 }
+            ]
+          }}
+          isNewTransaction={false}
         />
       )}
 

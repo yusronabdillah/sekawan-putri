@@ -5,6 +5,8 @@ import { LogOut, User, Users, Settings as SettingsIcon, Info, HelpCircle, Chevro
 import Modal from '../components/Modal';
 import CustomSelect from '../components/CustomSelect';
 import { PageHeader } from '../components/ui';
+import ReceiptPreviewModal from '../components/receipt/ReceiptPreviewModal';
+import { db } from '../db/db';
 
 export default function Settings() {
   const { user, logout } = useAuthStore();
@@ -16,6 +18,9 @@ export default function Settings() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isPrinterModalOpen, setIsPrinterModalOpen] = useState(false);
+  const [isTestReceiptOpen, setIsTestReceiptOpen] = useState(false);
+  const [isResetReportsModalOpen, setIsResetReportsModalOpen] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   
@@ -34,6 +39,34 @@ export default function Settings() {
   const handleConfirmSwitchAccount = () => {
     logout();
     navigate('/login', { replace: true });
+  };
+
+  const handleResetReports = async () => {
+    setIsResetting(true);
+    try {
+      // 1. Kosongkan data laporan di Dexie IndexedDB lokal
+      await db.transactions.clear();
+      await db.transaction_items.clear();
+      await db.expenses.clear();
+      await db.cash_sessions.clear();
+
+      // 2. Kosongkan data di backend SQLite jika aktif
+      try {
+        await fetch('http://localhost:5000/api/transactions/reset-reports', {
+          method: 'DELETE'
+        });
+      } catch (e) {
+        console.warn('Backend server tidak aktif atau offline, data lokal berhasil direset.');
+      }
+
+      setIsResetReportsModalOpen(false);
+      alert('✓ Berhasil! Seluruh data transaksi penjualan dan pengeluaran telah dibersihkan. Laporan kini kembali ke Rp 0.');
+    } catch (err) {
+      console.error('Gagal reset laporan:', err);
+      alert('Gagal membersihkan data laporan: ' + err.message);
+    } finally {
+      setIsResetting(false);
+    }
   };
 
   const isOwner = user?.role === 'OWNER';
@@ -177,7 +210,7 @@ export default function Settings() {
             </div>
             
             <div 
-              style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', transition: 'background-color 0.2s' }}
+              style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', cursor: 'pointer', transition: 'background-color 0.2s' }}
               onClick={() => setIsPrinterModalOpen(true)}
               onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--background)'}
               onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -187,6 +220,22 @@ export default function Settings() {
                 <span style={{ fontWeight: '500' }}>Konfigurasi Printer</span>
               </div>
               <ChevronRight size={18} color="var(--text-muted)" />
+            </div>
+
+            <div 
+              style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', transition: 'background-color 0.2s' }}
+              onClick={() => setIsResetReportsModalOpen(true)}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.05)'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <div className="flex items-center gap-3">
+                <div style={{ color: '#ef4444' }}><Trash2 size={20} /></div>
+                <div>
+                  <span style={{ fontWeight: '600', color: '#dc2626' }}>Reset Data Laporan & Transaksi</span>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Bersihkan seluruh riwayat transaksi & pengeluaran ke Rp 0</p>
+                </div>
+              </div>
+              <ChevronRight size={18} color="#ef4444" />
             </div>
           </>
         )}
@@ -245,17 +294,27 @@ export default function Settings() {
       </Modal>
 
       {/* Printer Modal */}
-      <Modal isOpen={isPrinterModalOpen} onClose={() => setIsPrinterModalOpen(false)} title="Konfigurasi Printer">
+      <Modal isOpen={isPrinterModalOpen} onClose={() => setIsPrinterModalOpen(false)} title="Konfigurasi Printer Thermal (Iware / POS)">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           
+          <div style={{ backgroundColor: 'rgba(34, 197, 94, 0.08)', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(34, 197, 94, 0.2)', fontSize: '13px', color: 'var(--text-main)', lineHeight: '1.5' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '700', color: '#15803d', marginBottom: '4px' }}>
+              <Printer size={16} />
+              <span>Dukungan Printer Thermal Iware (USB & Bluetooth)</span>
+            </div>
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>
+              Sistem mendukung printer thermal Iware seperti <strong>Iware C-58, MP-58, IW-58 (58mm)</strong> maupun <strong>Iware IW-80 / IW-220 (80mm)</strong>. Gunakan tombol tes di bawah untuk memeriksa cetakan fisik struk Anda.
+            </p>
+          </div>
+
           <div className="form-group">
             <label className="form-label">Ukuran Kertas</label>
             <CustomSelect 
               value={printerConfig.paperSize} 
               onChange={(val) => updatePrinterConfig({ paperSize: val })}
               options={[
-                { value: '58', label: '58 mm (Roll Kecil)' },
-                { value: '80', label: '80 mm (Roll Besar)' }
+                { value: '58', label: '58 mm (Roll Kecil - Standar Iware C-58 / MP-58)' },
+                { value: '80', label: '80 mm (Roll Besar - Standar Iware IW-80)' }
               ]}
             />
           </div>
@@ -341,9 +400,55 @@ export default function Settings() {
             />
           </div>
 
-          <button className="btn btn-primary btn-block" onClick={() => setIsPrinterModalOpen(false)}>Tutup & Simpan</button>
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <button 
+              type="button"
+              className="btn btn-outline btn-block"
+              onClick={() => setIsTestReceiptOpen(true)}
+              style={{ 
+                height: '46px', 
+                fontWeight: '700', 
+                borderColor: '#16a34a', 
+                color: '#15803d', 
+                backgroundColor: 'rgba(34, 197, 94, 0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <Printer size={18} />
+              <span>🧪 Tes Cetak Struk (Cek Printer Iware)</span>
+            </button>
+            <button className="btn btn-primary btn-block" onClick={() => setIsPrinterModalOpen(false)}>Simpan & Tutup</button>
+          </div>
         </div>
       </Modal>
+
+      {/* Test Receipt Modal for Iware Thermal Printer */}
+      {isTestReceiptOpen && (
+        <ReceiptPreviewModal
+          isOpen={isTestReceiptOpen}
+          onClose={() => setIsTestReceiptOpen(false)}
+          transaction={{
+            id: `TEST-${Date.now().toString().slice(-4)}`,
+            created_at: new Date().toISOString(),
+            cashier_name: user?.name || user?.username || 'Kasir Toko',
+            payment_method: 'CASH',
+            subtotal: 51000,
+            discount: 0,
+            tax: 0,
+            total_amount: 51000,
+            payment_amount: 100000,
+            change_amount: 49000,
+            items: [
+              { product_name: 'Sosis Champ Sapi 1kg', price: 47000, qty: 1 },
+              { product_name: 'Tahu Putih Segar (Pcs)', price: 4000, qty: 1 }
+            ]
+          }}
+          isNewTransaction={false}
+        />
+      )}
 
       {/* Category Management Modal */}
       <Modal isOpen={isCategoryModalOpen} onClose={() => setIsCategoryModalOpen(false)} title="Manajemen Kategori Produk">
@@ -567,6 +672,50 @@ export default function Settings() {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button className="btn btn-outline btn-block" onClick={() => setIsLogoutModalOpen(false)}>Batal</button>
           <button className="btn btn-danger btn-block" onClick={handleConfirmLogout}>Logout</button>
+        </div>
+      </Modal>
+
+      {/* Reset Reports Confirmation Modal */}
+      <Modal isOpen={isResetReportsModalOpen} onClose={() => !isResetting && setIsResetReportsModalOpen(false)} title="Konfirmasi Reset Data Laporan">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ backgroundColor: '#fef2f2', padding: '14px 16px', borderRadius: '10px', border: '1px solid #fecaca' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#991b1b', fontWeight: '700', marginBottom: '6px' }}>
+              <Trash2 size={18} />
+              <span>Peringatan Penghapusan Data Laporan</span>
+            </div>
+            <p style={{ margin: 0, fontSize: '13px', color: '#7f1d1d', lineHeight: '1.5' }}>
+              Tindakan ini akan mengosongkan seluruh riwayat penjualan kasir, item transaksi, pengeluaran operasional, dan riwayat sesi kas. Semua grafik laporan keuangan dan omzet akan kembali bersih ke <strong>Rp 0</strong>.
+            </p>
+          </div>
+
+          <div style={{ backgroundColor: 'rgba(34, 197, 94, 0.08)', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(34, 197, 94, 0.2)', fontSize: '13px', color: '#15803d' }}>
+            ✅ <strong>Data yang TETAP AMAN:</strong> Data 433 Master Produk, Harga, Stok, Barcode, Kategori, dan Akun Kasir <strong>TIDAK AKAN DIHAPUS</strong>.
+          </div>
+
+          <p style={{ margin: 0, fontSize: '13.5px', color: 'var(--text-main)', fontWeight: '500' }}>
+            Apakah Anda yakin ingin melanjutkan reset seluruh data laporan?
+          </p>
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+            <button 
+              type="button" 
+              className="btn btn-secondary" 
+              style={{ flex: 1, height: '46px' }}
+              onClick={() => setIsResetReportsModalOpen(false)}
+              disabled={isResetting}
+            >
+              Batal
+            </button>
+            <button 
+              type="button" 
+              className="btn btn-danger" 
+              style={{ flex: 1, height: '46px', fontWeight: '700' }}
+              onClick={handleResetReports}
+              disabled={isResetting}
+            >
+              {isResetting ? 'Mereset Data...' : 'Ya, Bersihkan Laporan'}
+            </button>
+          </div>
         </div>
       </Modal>
 

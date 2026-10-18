@@ -128,3 +128,16 @@ exports.getTransactions = (req, res) => {
         res.json(rows);
     });
 };
+
+exports.resetReports = (req, res) => {
+    db.serialize(() => {
+        db.run('DELETE FROM transaction_items');
+        db.run('DELETE FROM transactions');
+        db.run('DELETE FROM expenses', (err) => {
+            if (err) {
+                return res.status(500).json({ error: 'Gagal mereset laporan di database: ' + err.message });
+            }
+            res.json({ message: 'Semua data transaksi dan pengeluaran berhasil dibersihkan' });
+        });
+    });
+};

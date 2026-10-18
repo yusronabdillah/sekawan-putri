@@ -229,11 +229,22 @@ export default function Inventory() {
     }
 
     // 2. JIKA DI HALAMAN UTAMA MANAJEMEN STOK (MODAL TUTUP)
-    const found = products.find(p => 
+    let found = products.find(p => 
       (p.barcode && String(p.barcode).trim().toLowerCase() === lowerCode) ||
       (p.sku && String(p.sku).trim().toLowerCase() === lowerCode) ||
-      (p.id && String(p.id).trim().toLowerCase() === lowerCode)
+      (p.id && String(p.id).trim().toLowerCase() === lowerCode) ||
+      (p.name && String(p.name).trim().toLowerCase() === lowerCode)
     );
+
+    // Fallback: jika diketik nama dan hanya ada 1 produk cocok
+    if (!found) {
+      const matchByName = products.filter(p => 
+        p.name && p.name.toLowerCase().includes(lowerCode)
+      );
+      if (matchByName.length === 1) {
+        found = matchByName[0];
+      }
+    }
 
     if (found) {
       playScannerSound('success');
@@ -249,7 +260,7 @@ export default function Inventory() {
       playScannerSound('error');
       setToast({
         type: 'error',
-        message: `Barcode "${code}" belum terdaftar dalam master produk`,
+        message: `Produk / Barcode "${code}" belum terdaftar dalam master produk`,
         actionText: '➕ Tambah Baru',
         onAction: () => handleOpenAdd(code),
         timestamp: Date.now()
@@ -268,7 +279,7 @@ export default function Inventory() {
 
       // Jika sedang mengetik di kolom pencarian
       if (isInputActive && activeEl === searchInputRef.current) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' || e.key === 'Tab') {
           e.preventDefault();
           if (search.trim()) {
             handleBarcodeScan(search.trim());
@@ -279,7 +290,7 @@ export default function Inventory() {
 
       // Jika sedang mengetik di kolom barcode dalam modal
       if (isInputActive && activeEl === barcodeInputRef.current) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' || e.key === 'Tab') {
           e.preventDefault();
           if (formData.barcode.trim()) {
             handleBarcodeScan(formData.barcode.trim());
@@ -292,7 +303,7 @@ export default function Inventory() {
       const timeDiff = now - lastKeyTimeRef.current;
       lastKeyTimeRef.current = now;
 
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' || e.key === 'Tab') {
         if (barcodeBufferRef.current.length > 2) {
           e.preventDefault();
           const scanned = barcodeBufferRef.current;
@@ -302,8 +313,8 @@ export default function Inventory() {
         return;
       }
 
-      // Deteksi kecepatan scanner Clabel T27H (< 120ms)
-      if (timeDiff > 120) {
+      // Deteksi kecepatan scanner USB, Wireless 2.4G & Bluetooth HID (< 220ms)
+      if (timeDiff > 220) {
         barcodeBufferRef.current = '';
       }
 
@@ -519,11 +530,11 @@ export default function Inventory() {
                   cursor: 'pointer',
                   flex: '0 0 auto'
                 }}
-                title="Buka Simulator Scan Barcode Clabel T27H"
+                title="Buka Simulator Scan Barcode (Kabel USB, Wireless 2.4G & Bluetooth HID)"
               >
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block', boxShadow: '0 0 6px #22c55e' }}></span>
                 <Barcode size={16} />
-                <span>Clabel T27H (Tes Scan &rarr;)</span>
+                <span>Scanner USB / BT (Tes &rarr;)</span>
               </button>
               <button className="btn btn-secondary" onClick={() => setIsImportOpen(true)} style={{ flex: '1 1 auto', minWidth: '130px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <FileUp size={18} style={{ marginRight: '6px' }} /> Import CSV
@@ -1061,15 +1072,18 @@ export default function Inventory() {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ backgroundColor: 'var(--primary-light)', padding: '12px 14px', borderRadius: '8px', fontSize: '13px', lineHeight: '1.5', color: 'var(--text-main)' }}>
-            <strong>💡 Cara Kerja Scanner Meja Clabel T27H di Manajemen Stok:</strong>
+            <strong>💡 Cara Kerja Scanner Barcode (Kabel USB & Bluetooth HID) di Stok:</strong>
             <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)' }}>
-              Alat ini bekerja otomatis secara <em>hands-free</em>.
+              Alat ini bekerja otomatis secara <em>hands-free</em> baik dengan kabel USB maupun Bluetooth (Mode HID).
               {isAddOpen ? (
                 <span style={{ color: '#15803d', fontWeight: '600' }}> Form Tambah/Edit sedang terbuka: hasil scan akan langsung mengisi kolom Barcode produk!</span>
               ) : (
                 <span> Di halaman stok: produk yang discan akan otomatis dicari dan muncul tombol untuk langsung mengedit stok/harganya.</span>
               )}
             </p>
+            <div style={{ marginTop: '8px', padding: '6px 10px', backgroundColor: 'rgba(59, 130, 246, 0.08)', borderRadius: '6px', border: '1px solid rgba(59, 130, 246, 0.2)', fontSize: '12px', color: '#1d4ed8' }}>
+              <strong>📱 Mode Bluetooth:</strong> Pasangkan (pairing) scanner ke Laptop/PC/Tablet kasir di menu Bluetooth OS dengan mode <em>HID Keyboard</em>.
+            </div>
           </div>
 
           <div>

@@ -11,4 +11,7 @@ router.post('/', verifyToken, transactionController.createTransaction);
 // Only Owner can void transactions
 router.post('/:id/void', verifyToken, verifyOwner, transactionController.voidTransaction);
 
+// Reset all reports and transactions
+router.delete('/reset-reports', transactionController.resetReports);
+
 module.exports = router;
