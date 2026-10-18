@@ -1048,6 +1048,16 @@ export default function Inventory() {
         onClose={() => setIsScannerSimulatorOpen(false)}
         title="Simulator Scanner Clabel T27H (Manajemen Stok)"
         maxWidth="540px"
+        footer={
+          <div style={{ display: 'flex', width: '100%', justifyContent: 'flex-end' }}>
+            <AppButton 
+              onClick={() => setIsScannerSimulatorOpen(false)}
+              style={{ minWidth: '120px', minHeight: '40px', fontWeight: '700' }}
+            >
+              Tutup
+            </AppButton>
+          </div>
+        }
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ backgroundColor: 'var(--primary-light)', padding: '12px 14px', borderRadius: '8px', fontSize: '13px', lineHeight: '1.5', color: 'var(--text-main)' }}>
@@ -1144,10 +1154,6 @@ export default function Inventory() {
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
               Ketik kode barcode di kolom pencarian atau langsung pada kolom Barcode di dalam form Tambah/Edit Produk, lalu tekan tombol <strong>Enter</strong>. Sistem akan membunyikan audio chime kasir dan memproses barcode otomatis!
             </p>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-            <AppButton onClick={() => setIsScannerSimulatorOpen(false)}>Tutup</AppButton>
           </div>
         </div>
       </AppDialog>

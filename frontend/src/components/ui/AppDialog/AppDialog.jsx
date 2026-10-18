@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import './AppDialog.css';
 import { X } from 'lucide-react';
 
@@ -10,6 +11,13 @@ export function AppDialog({
   footer,
   maxWidth = '500px'
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -21,9 +29,9 @@ export function AppDialog({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div className="app-dialog-overlay" onClick={onClose}>
       <div 
         className="app-dialog-content" 
@@ -32,7 +40,7 @@ export function AppDialog({
       >
         <div className="app-dialog-header">
           <h2 className="app-dialog-title">{title}</h2>
-          <button className="app-dialog-close" onClick={onClose}>
+          <button className="app-dialog-close" onClick={onClose} aria-label="Tutup Dialog">
             <X size={20} />
           </button>
         </div>
@@ -47,6 +55,7 @@ export function AppDialog({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

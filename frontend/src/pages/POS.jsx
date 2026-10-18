@@ -297,11 +297,17 @@ export default function POS() {
         isOpen={sayurModal.isOpen} 
         onClose={() => setSayurModal({ ...sayurModal, isOpen: false })}
         title={`Input Pesanan: ${sayurModal.product?.name}`}
+        footer={
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', width: '100%' }}>
+            <AppButton variant="outline" onClick={() => setSayurModal({ ...sayurModal, isOpen: false })}>Batal</AppButton>
+            <AppButton onClick={handleSayurSubmit}>Tambahkan</AppButton>
+          </div>
+        }
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
             <label className="form-label">Satuan</label>
-            <CustomSelect
+            <CustomSelect 
               value={sayurModal.unit} 
               onChange={val => handleSayurUnitChange(val, sayurModal.qty)}
               options={[
@@ -334,10 +340,6 @@ export default function POS() {
               placeholder="Masukkan nominal harga (Rp)" 
             />
           </div>
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '16px' }}>
-            <AppButton variant="outline" onClick={() => setSayurModal({ ...sayurModal, isOpen: false })}>Batal</AppButton>
-            <AppButton onClick={handleSayurSubmit}>Tambahkan</AppButton>
-          </div>
         </div>
       </AppDialog>
 
@@ -346,6 +348,16 @@ export default function POS() {
         isOpen={isScannerSimulatorOpen}
         onClose={() => setIsScannerSimulatorOpen(false)}
         title="Uji Coba & Simulasi Scanner Barcode Clabel T27H"
+        footer={
+          <div style={{ display: 'flex', width: '100%', justifyContent: 'flex-end' }}>
+            <AppButton 
+              onClick={() => setIsScannerSimulatorOpen(false)}
+              style={{ minWidth: '120px', minHeight: '40px', fontWeight: '700' }}
+            >
+              Tutup
+            </AppButton>
+          </div>
+        }
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ backgroundColor: 'rgba(34, 197, 94, 0.08)', padding: '12px 16px', borderRadius: '12px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
@@ -457,10 +469,6 @@ export default function POS() {
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
               Ketik kode SKU (contoh: <code>SKW00423</code>) di kolom pencarian atau langsung saat berada di halaman kasir, lalu tekan tombol <strong>Enter</strong>. Sistem akan membunyikan suara beep register dan memasukkannya ke keranjang belanja!
             </p>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-            <AppButton onClick={() => setIsScannerSimulatorOpen(false)}>Tutup</AppButton>
           </div>
         </div>
       </AppDialog>

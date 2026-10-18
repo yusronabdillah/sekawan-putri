@@ -337,6 +337,26 @@ export default function WarehouseApproval() {
         onClose={() => !loading && setConfirmModal({ isOpen: false, approval: null, isApprove: false })} 
         title={confirmModal.isApprove ? "Konfirmasi Persetujuan" : "Konfirmasi Penolakan"}
         maxWidth="400px"
+        footer={
+          <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+            <AppButton 
+              variant="outline" 
+              onClick={() => setConfirmModal({ isOpen: false, approval: null, isApprove: false })}
+              disabled={loading}
+              style={{ flex: 1 }}
+            >
+              Batal
+            </AppButton>
+            <AppButton 
+              variant={confirmModal.isApprove ? 'primary' : 'danger'} 
+              onClick={executeAction}
+              loading={loading}
+              style={{ flex: 1 }}
+            >
+              {confirmModal.isApprove ? "Ya, Setujui" : "Ya, Tolak"}
+            </AppButton>
+          </div>
+        }
       >
         <div style={{ textAlign: 'center', padding: '16px 0' }}>
           <div style={{ 
@@ -362,7 +382,7 @@ export default function WarehouseApproval() {
           </p>
           
           {!confirmModal.isApprove && (
-            <div style={{ marginBottom: '24px', textAlign: 'left' }}>
+            <div style={{ marginBottom: '8px', textAlign: 'left' }}>
               <AppTextarea
                 label="Alasan Penolakan (Opsional)"
                 placeholder="Tulis alasan..."
@@ -372,25 +392,6 @@ export default function WarehouseApproval() {
               />
             </div>
           )}
-          
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <AppButton 
-              variant="outline" 
-              onClick={() => setConfirmModal({ isOpen: false, approval: null, isApprove: false })}
-              disabled={loading}
-              style={{ flex: 1 }}
-            >
-              Batal
-            </AppButton>
-            <AppButton 
-              variant={confirmModal.isApprove ? 'primary' : 'danger'} 
-              onClick={executeAction}
-              loading={loading}
-              style={{ flex: 1 }}
-            >
-              {confirmModal.isApprove ? "Ya, Setujui" : "Ya, Tolak"}
-            </AppButton>
-          </div>
         </div>
       </AppDialog>
     </div>
