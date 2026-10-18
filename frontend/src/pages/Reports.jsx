@@ -46,7 +46,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function Reports() {
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const { categories, parentMapping = {} } = useCategoryStore();
   const [period, setPeriod] = useState('today');
   const [activeTab, setActiveTab] = useState('summary'); // summary, transactions, expenses, cashier, recap
@@ -819,7 +819,10 @@ export default function Reports() {
                         }
                         
                         try {
-                          await fetch('http://localhost:5000/api/transactions/reset-reports', { method: 'DELETE' });
+                          await fetch('http://localhost:5000/api/transactions/reset-reports', {
+                            method: 'DELETE',
+                            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                          });
                         } catch (e) {}
 
                         alert("✓ Berhasil! Seluruh data laporan berhasil direset ke Rp 0.");

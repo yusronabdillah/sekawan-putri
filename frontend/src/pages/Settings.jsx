@@ -10,7 +10,7 @@ import { db } from '../db/db';
 import { apiClient } from '../services/apiClient';
 
 export default function Settings() {
-  const { user, logout } = useAuthStore();
+  const { user, token, logout } = useAuthStore();
   const { config: printerConfig, updateConfig: updatePrinterConfig } = usePrinterStore();
   const navigate = useNavigate();
 
@@ -69,7 +69,8 @@ export default function Settings() {
       // 3. Kosongkan data di backend SQLite jika aktif
       try {
         await fetch('http://localhost:5000/api/transactions/reset-reports', {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
         });
       } catch (e) {
         console.warn('Backend server tidak aktif atau offline, data lokal & cloud berhasil direset.');

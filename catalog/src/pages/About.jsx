@@ -68,7 +68,7 @@ export default function About({ WA_NUMBER }) {
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <MapPin size={18} />
-              <span>Jl. Tirto Rahayu No.12 A, Dau (Buka di Maps &rarr;)</span>
+              <span>Jl. Tirto Rahayu No.12 A, Landungsari, Dau</span>
             </a>
             <div className="about-store-badge">
               <Clock size={18} />
