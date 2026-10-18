@@ -95,7 +95,7 @@ function AppContent() {
         <header className="header">
           <div className="container header-container">
             <Link to="/" className="logo" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-              <img src="/logo.png" alt="Sekawan Putri Logo" className="logo-img" />
+              <img src="/logo.png?v=2" alt="Sekawan Putri Logo" className="logo-img" />
               <div className="logo-brand">
                 <span className="logo-title">Sekawan Putri</span>
                 <span className="logo-subtitle">Frozen Food & Sayur Segar</span>
