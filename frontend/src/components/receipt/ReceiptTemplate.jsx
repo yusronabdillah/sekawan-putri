@@ -13,23 +13,23 @@ const ReceiptTemplate = React.forwardRef(({ transaction, config }, ref) => {
   } = config || {};
 
   // Widths mapping for paper size:
-  // 58mm paper has 48mm printable head width
-  // 80mm paper has 72mm printable head width
+  // 58mm paper / 57mm EDC roll has 40mm safe printable width (avoids left/right cut off)
+  // 80mm paper has 70mm safe printable width
   const is80 = paperSize === '80';
-  const printableWidth = is80 ? '72mm' : '48mm';
+  const printableWidth = is80 ? '70mm' : '40mm';
   const baseFontSize = is80 
-    ? (fontSize === 'compact' ? '11px' : '12px')
-    : (fontSize === 'compact' ? '9px' : '10.5px');
+    ? (fontSize === 'compact' ? '10.5px' : '11.5px')
+    : (fontSize === 'compact' ? '8.5px' : '9.5px');
   const headerFontSize = is80
-    ? (fontSize === 'compact' ? '13px' : '14px')
-    : (fontSize === 'compact' ? '11.5px' : '12.5px');
+    ? (fontSize === 'compact' ? '12.5px' : '13.5px')
+    : (fontSize === 'compact' ? '10.5px' : '11.5px');
   
   const formatRupiah = (val) => {
     return 'Rp ' + (val || 0).toLocaleString('id-ID');
   };
 
   const invoiceNo = transaction.id ? transaction.id.split('-')[0].toUpperCase() : 'INV-???';
-  const dateStr = transaction.created_at ? new Date(transaction.created_at).toLocaleDateString('id-ID') : '-';
+  const dateStr = transaction.created_at ? new Date(transaction.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-';
   const timeStr = transaction.created_at ? new Date(transaction.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-';
 
   return (
@@ -44,8 +44,8 @@ const ReceiptTemplate = React.forwardRef(({ transaction, config }, ref) => {
         color: '#000',
         backgroundColor: '#fff',
         fontSize: baseFontSize,
-        lineHeight: '1.25',
-        padding: '0 1mm',
+        lineHeight: '1.2',
+        padding: '0 1.5mm',
         boxSizing: 'border-box',
         overflow: 'hidden',
       }}
