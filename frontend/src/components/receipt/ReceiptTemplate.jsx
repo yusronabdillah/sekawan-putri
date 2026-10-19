@@ -12,10 +12,17 @@ const ReceiptTemplate = React.forwardRef(({ transaction, config }, ref) => {
     fontSize = 'normal'
   } = config || {};
 
-  // Widths mapping for paper size
-  const maxWidth = paperSize === '80' ? '300px' : '220px';
-  const baseFontSize = fontSize === 'compact' ? '11px' : '13px';
-  const headerFontSize = fontSize === 'compact' ? '14px' : '16px';
+  // Widths mapping for paper size:
+  // 58mm paper has 48mm printable head width
+  // 80mm paper has 72mm printable head width
+  const is80 = paperSize === '80';
+  const printableWidth = is80 ? '72mm' : '48mm';
+  const baseFontSize = is80 
+    ? (fontSize === 'compact' ? '11px' : '12px')
+    : (fontSize === 'compact' ? '9px' : '10.5px');
+  const headerFontSize = is80
+    ? (fontSize === 'compact' ? '13px' : '14px')
+    : (fontSize === 'compact' ? '11.5px' : '12.5px');
   
   const formatRupiah = (val) => {
     return 'Rp ' + (val || 0).toLocaleString('id-ID');
@@ -30,44 +37,46 @@ const ReceiptTemplate = React.forwardRef(({ transaction, config }, ref) => {
       ref={ref}
       className="receipt-print-area"
       style={{
-        width: maxWidth,
+        width: printableWidth,
+        maxWidth: printableWidth,
         margin: `${marginTop}mm auto ${marginBottom}mm auto`,
-        fontFamily: "'Courier New', Courier, monospace",
+        fontFamily: "'Consolas', 'Courier New', Courier, monospace",
         color: '#000',
         backgroundColor: '#fff',
         fontSize: baseFontSize,
-        lineHeight: '1.4',
-        padding: '0',
+        lineHeight: '1.25',
+        padding: '0 1mm',
         boxSizing: 'border-box',
+        overflow: 'hidden',
       }}
     >
       {/* HEADER */}
-      <div style={{ textAlign: 'center', marginBottom: '12px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '8px' }}>
         <div style={{ fontWeight: 'bold', fontSize: headerFontSize, marginBottom: '2px' }}>SEKAWAN PUTRI POS</div>
         {showAddress && (
           <div style={{ fontSize: baseFontSize }}>
-            Jl. Tirto Rahayu No.12 A, Dau, Malang<br />
+            Jl. Tirto Rahayu No.12 A, Dau<br />
             Telp/WA: 0857-7558-6209
           </div>
         )}
       </div>
 
-      <div style={{ borderTop: '1px dashed #000', margin: '8px 0' }}></div>
+      <div style={{ borderTop: '1px dashed #000', margin: '4px 0' }}></div>
 
       {/* INFO TRANSAKSI */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1px' }}>
         <span>Tgl : {dateStr}</span>
         <span>Jam: {timeStr}</span>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1px' }}>
         <span>No  : {invoiceNo}</span>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1px' }}>
         <span>Ksr : {transaction.cashier_name || 'Kasir'}</span>
         <span>Mtd: {transaction.payment_method || 'CASH'}</span>
       </div>
 
-      <div style={{ borderTop: '1px dashed #000', margin: '8px 0' }}></div>
+      <div style={{ borderTop: '1px dashed #000', margin: '4px 0' }}></div>
 
       {/* ITEMS */}
       <div style={{ marginBottom: '8px' }}>

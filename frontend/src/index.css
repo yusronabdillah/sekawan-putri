@@ -834,4 +834,9 @@ p {
     overflow: visible !important;
   }
   ::-webkit-scrollbar { display: none !important; }
+  .receipt-print-area {
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
 }
