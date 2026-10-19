@@ -5,7 +5,6 @@ import { LogOut, User, Users, Settings as SettingsIcon, Info, HelpCircle, Chevro
 import Modal from '../components/Modal';
 import CustomSelect from '../components/CustomSelect';
 import { PageHeader } from '../components/ui';
-import ReceiptPreviewModal from '../components/receipt/ReceiptPreviewModal';
 import { db } from '../db/db';
 import { apiClient } from '../services/apiClient';
 
@@ -19,7 +18,6 @@ export default function Settings() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isPrinterModalOpen, setIsPrinterModalOpen] = useState(false);
-  const [isTestReceiptOpen, setIsTestReceiptOpen] = useState(false);
   const [isResetReportsModalOpen, setIsResetReportsModalOpen] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
@@ -435,55 +433,11 @@ export default function Settings() {
             />
           </div>
 
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <button 
-              type="button"
-              className="btn btn-outline btn-block"
-              onClick={() => setIsTestReceiptOpen(true)}
-              style={{ 
-                height: '46px', 
-                fontWeight: '700', 
-                borderColor: '#16a34a', 
-                color: '#15803d', 
-                backgroundColor: 'rgba(34, 197, 94, 0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <Printer size={18} />
-              <span>🧪 Tes Cetak Struk (Cek Printer Iware)</span>
-            </button>
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
             <button className="btn btn-primary btn-block" onClick={() => setIsPrinterModalOpen(false)}>Simpan & Tutup</button>
           </div>
         </div>
       </Modal>
-
-      {/* Test Receipt Modal for Iware Thermal Printer */}
-      {isTestReceiptOpen && (
-        <ReceiptPreviewModal
-          isOpen={isTestReceiptOpen}
-          onClose={() => setIsTestReceiptOpen(false)}
-          transaction={{
-            id: `TEST-${Date.now().toString().slice(-4)}`,
-            created_at: new Date().toISOString(),
-            cashier_name: user?.name || user?.username || 'Kasir Toko',
-            payment_method: 'CASH',
-            subtotal: 51000,
-            discount: 0,
-            tax: 0,
-            total_amount: 51000,
-            payment_amount: 100000,
-            change_amount: 49000,
-            items: [
-              { product_name: 'Sosis Champ Sapi 1kg', price: 47000, qty: 1 },
-              { product_name: 'Tahu Putih Segar (Pcs)', price: 4000, qty: 1 }
-            ]
-          }}
-          isNewTransaction={false}
-        />
-      )}
 
       {/* Category Management Modal */}
       <Modal isOpen={isCategoryModalOpen} onClose={() => setIsCategoryModalOpen(false)} title="Manajemen Kategori Produk">

@@ -5,10 +5,9 @@ import { useCartStore, useCategoryStore, useAuthStore } from '../store/store';
 import ProductCard from '../components/ProductCard';
 import CheckoutModal from '../components/CheckoutModal';
 import CartBottomSheet from '../components/CartBottomSheet';
-import { Search, ShoppingBag, X, ShoppingCart, RefreshCw, User, Calendar, Barcode, Printer } from 'lucide-react';
+import { Search, ShoppingBag, X, ShoppingCart, RefreshCw, User, Calendar, Barcode } from 'lucide-react';
 import { AppDialog, AppInput, AppCombobox, AppButton, PageHeader } from '../components/ui';
 import CustomSelect from '../components/CustomSelect';
-import ReceiptPreviewModal from '../components/receipt/ReceiptPreviewModal';
 
 export default function POS() {
   const liveProducts = useLiveQuery(() => db.products.toArray(), null);
@@ -33,7 +32,6 @@ export default function POS() {
   const [isCartSheetOpen, setIsCartSheetOpen] = useState(false);
   const [sayurModal, setSayurModal] = useState({ isOpen: false, product: null, qty: '1', price: '', unit: 'Pcs' });
   const [isScannerSimulatorOpen, setIsScannerSimulatorOpen] = useState(false);
-  const [isTestReceiptOpen, setIsTestReceiptOpen] = useState(false);
   
   const { cart, addToCart, clearCart, getTotal } = useCartStore();
   const total = getTotal();
@@ -522,28 +520,6 @@ export default function POS() {
                     <Barcode size={14} />
                     <span>Scanner USB / BT (Tes &rarr;)</span>
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsTestReceiptOpen(true)}
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '6px', 
-                      backgroundColor: 'rgba(59, 130, 246, 0.1)', 
-                      color: '#1d4ed8', 
-                      padding: '4px 12px', 
-                      borderRadius: '100px', 
-                      border: '1px solid rgba(59, 130, 246, 0.25)', 
-                      fontSize: '12px', 
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                    title="Uji coba cetak struk ke printer thermal Iware (58mm/80mm)"
-                  >
-                    <Printer size={14} />
-                    <span>Tes Printer Iware</span>
-                  </button>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'var(--primary-light)', padding: '4px 10px', borderRadius: '100px', border: '1px solid rgba(74, 29, 36, 0.1)' }}>
                     <User size={14} color="var(--primary)" />
                     <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--primary)' }}>Kasir: {user?.username || user?.name || 'Admin'}</span>
@@ -740,31 +716,6 @@ export default function POS() {
           cart={cart} 
           total={total} 
           clearCart={clearCart} 
-        />
-      )}
-
-      {/* TEST RECEIPT MODAL FOR IWARE THERMAL PRINTER */}
-      {isTestReceiptOpen && (
-        <ReceiptPreviewModal 
-          isOpen={isTestReceiptOpen}
-          onClose={() => setIsTestReceiptOpen(false)}
-          transaction={{
-            id: `TEST-${Date.now().toString().slice(-4)}`,
-            created_at: new Date().toISOString(),
-            cashier_name: user?.name || user?.username || 'Kasir Toko',
-            payment_method: 'CASH',
-            subtotal: 51000,
-            discount: 0,
-            tax: 0,
-            total_amount: 51000,
-            payment_amount: 100000,
-            change_amount: 49000,
-            items: [
-              { product_name: 'Sosis Champ Sapi 1kg', price: 47000, qty: 1 },
-              { product_name: 'Tahu Putih Segar (Pcs)', price: 4000, qty: 1 }
-            ]
-          }}
-          isNewTransaction={false}
         />
       )}
 
