@@ -48,11 +48,12 @@ export default function CheckoutModal({ isOpen, onClose, onEditPesanan, cart, to
     if (!isPaidValid) return;
 
     const txId = uuidv4();
-    const invoiceNo = `INV-${Math.floor(Date.now() / 1000)}`;
+    const invoiceNo = `INV-${txId.split('-')[0].toUpperCase()}`;
     const now = new Date();
 
     const transaction = {
       id: txId,
+      invoice_number: invoiceNo,
       cashier_id: user.id,
       cashier_name: user.name || user.username,
       customer_id: null,
@@ -104,6 +105,7 @@ export default function CheckoutModal({ isOpen, onClose, onEditPesanan, cart, to
       await db.transaction('rw', db.products, db.transactions, db.transaction_items, db.stock_movements, db.sync_queue, db.batches, db.audit_logs, async () => {
         await db.transactions.add({
           id: transaction.id,
+          invoice_number: invoiceNo,
           cashier_id: transaction.cashier_id,
           customer_id: transaction.customer_id,
           status: transaction.status,

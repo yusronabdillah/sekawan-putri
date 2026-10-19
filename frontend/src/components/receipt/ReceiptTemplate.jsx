@@ -28,7 +28,19 @@ const ReceiptTemplate = React.forwardRef(({ transaction, config }, ref) => {
     return 'Rp ' + (val || 0).toLocaleString('id-ID');
   };
 
-  const invoiceNo = transaction.id ? transaction.id.split('-')[0].toUpperCase() : 'INV-???';
+  const formatInvoiceNumber = (t) => {
+    if (!t) return 'INV-???';
+    const raw = t.invoice_number || t.invoiceNo || t.id || '';
+    if (!raw) return 'INV-???';
+    if (raw.startsWith('INV-')) return raw;
+    if (raw.startsWith('TEST-')) return raw;
+    if (raw.includes('-')) {
+      return `INV-${raw.split('-')[0].toUpperCase()}`;
+    }
+    return `INV-${raw.toUpperCase()}`;
+  };
+
+  const invoiceNo = formatInvoiceNumber(transaction);
   const dateStr = transaction.created_at ? new Date(transaction.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-';
   const timeStr = transaction.created_at ? new Date(transaction.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-';
 

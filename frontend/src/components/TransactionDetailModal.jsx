@@ -13,6 +13,20 @@ export default function TransactionDetailModal({ isOpen, onClose, tx }) {
   const formattedDate = date.toLocaleDateString('id-ID');
   const formattedTime = date.toLocaleTimeString('id-ID');
 
+  const formatInvoiceNumber = (t) => {
+    if (!t) return 'INV-???';
+    const raw = t.invoice_number || t.invoiceNo || t.id || '';
+    if (!raw) return 'INV-???';
+    if (raw.startsWith('INV-')) return raw;
+    if (raw.startsWith('TEST-')) return raw;
+    if (raw.includes('-')) {
+      return `INV-${raw.split('-')[0].toUpperCase()}`;
+    }
+    return `INV-${raw.toUpperCase()}`;
+  };
+
+  const invoiceNo = formatInvoiceNumber(tx);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Detail Transaksi">
       <div className="card" style={{ padding: '16px', marginBottom: '16px' }}>
@@ -23,7 +37,7 @@ export default function TransactionDetailModal({ isOpen, onClose, tx }) {
               <Receipt size={24} />
             </div>
             <div>
-              <h3 style={{ margin: '0 0 4px 0' }}>Invoice: {tx.id.split('-')[0].toUpperCase()}</h3>
+              <h3 style={{ margin: '0 0 4px 0' }}>Invoice: {invoiceNo}</h3>
               <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{formattedDate} {formattedTime}</div>
             </div>
           </div>

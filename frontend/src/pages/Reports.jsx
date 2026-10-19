@@ -45,6 +45,18 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
+const formatInvoiceNumber = (t) => {
+  if (!t) return 'INV-???';
+  const raw = t.invoice_number || t.invoiceNo || (typeof t === 'string' ? t : t.id) || '';
+  if (!raw) return 'INV-???';
+  if (raw.startsWith('INV-')) return raw;
+  if (raw.startsWith('TEST-')) return raw;
+  if (raw.includes('-')) {
+    return `INV-${raw.split('-')[0].toUpperCase()}`;
+  }
+  return `INV-${raw.toUpperCase()}`;
+};
+
 export default function Reports() {
   const { user, token } = useAuthStore();
   const { categories, parentMapping = {} } = useCategoryStore();
@@ -123,7 +135,7 @@ export default function Reports() {
     if (activeTab === 'transactions') {
       const txs = filteredTx || [];
       exportData = txs.map(t => ({
-        'Invoice': t?.id ? t.id.split('-')[0].toUpperCase() : '-',
+        'Invoice': t ? formatInvoiceNumber(t) : '-',
         'Tanggal': t?.created_at ? new Date(t.created_at).toLocaleDateString('id-ID') : '-',
         'Jam': t?.created_at ? new Date(t.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-',
         'Pelanggan': t?.customer_name || 'Umum',
@@ -157,7 +169,7 @@ export default function Reports() {
       const detailedData = [];
       
       txs.forEach(tx => {
-        const invoice = tx.id.split('-')[0].toUpperCase();
+        const invoice = formatInvoiceNumber(tx);
         const date = new Date(tx.created_at).toLocaleDateString('id-ID');
         const time = new Date(tx.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         
@@ -206,7 +218,7 @@ export default function Reports() {
       const methodMap = {};
 
       txs.forEach(tx => {
-        const invoice = tx.id.split('-')[0].toUpperCase();
+        const invoice = formatInvoiceNumber(tx);
         const date = new Date(tx.created_at).toLocaleDateString('id-ID');
         const time = new Date(tx.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         
@@ -307,6 +319,7 @@ export default function Reports() {
     const tCustomer = t?.customer_name || '';
     
     const matchSearch = tId.toLowerCase().includes(searchTx.toLowerCase()) ||
+                        formatInvoiceNumber(t).toLowerCase().includes(searchTx.toLowerCase()) ||
                         tCashier.toLowerCase().includes(searchTx.toLowerCase()) ||
                         tCustomer.toLowerCase().includes(searchTx.toLowerCase());
     const matchMethod = filterMethod ? t.payment_method === filterMethod : true;
@@ -338,7 +351,7 @@ export default function Reports() {
         className="hover-row"
       >
         <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <div style={{ fontWeight: '600', fontSize: '15px' }}>{tId.split('-')[0].toUpperCase()}</div>
+          <div style={{ fontWeight: '600', fontSize: '15px' }}>{formatInvoiceNumber(tx)}</div>
           <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{dateStr}</div>
           <div style={{ fontSize: '13px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <User size={14} color="var(--text-muted)"/> {tx.customer_name || 'Umum'} 
