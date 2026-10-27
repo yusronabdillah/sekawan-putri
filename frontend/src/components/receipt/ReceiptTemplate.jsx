@@ -6,7 +6,7 @@ const ReceiptTemplate = React.forwardRef(({ transaction, config }, ref) => {
   const {
     paperSize = '58',
     showAddress = true,
-    footerText = 'Terima kasih telah berbelanja\nSimpan struk ini sebagai bukti pembayaran',
+    footerText = 'Terima kasih telah berbelanja\nSimpan struk ini sebagai\nbukti pembayaran',
     marginTop = 0,
     marginBottom = 10,
     fontSize = 'normal'

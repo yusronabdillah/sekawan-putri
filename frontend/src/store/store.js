@@ -85,7 +85,7 @@ export const usePrinterStore = create(
         paperSize: '58', // '58' or '80'
         showLogo: true,
         showAddress: true,
-        footerText: 'Terima kasih telah berbelanja\nSimpan struk ini sebagai bukti pembayaran',
+        footerText: 'Terima kasih telah berbelanja\nSimpan struk ini sebagai\nbukti pembayaran',
         autoPrint: false,
         copies: 1,
         marginTop: 0,

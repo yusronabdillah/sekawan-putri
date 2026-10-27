@@ -8,7 +8,7 @@ export const EscPosBuilder = {
     const {
       paperSize = '58',
       showAddress = true,
-      footerText = 'Terima kasih telah berbelanja\nSimpan struk ini sebagai bukti pembayaran',
+      footerText = 'Terima kasih telah berbelanja\nSimpan struk ini sebagai\nbukti pembayaran',
     } = config;
 
     const lineWidth = paperSize === '80' ? 42 : 32;
@@ -23,7 +23,8 @@ export const EscPosBuilder = {
       ALIGN_RIGHT: `${ESC}a\x02`,
       BOLD_ON: `${ESC}E\x01`,
       BOLD_OFF: `${ESC}E\x00`,
-      DOUBLE_ON: `${GS}!\x11`,
+      DOUBLE_ON: `${GS}!\x11`, // 2x width, 2x height
+      DOUBLE_HEIGHT: `${GS}!\x01`, // 1x width, 2x height (fits 32 chars)
       DOUBLE_OFF: `${GS}!\x00`,
       CUT: `${GS}V\x41\x00`
     };
@@ -56,19 +57,55 @@ export const EscPosBuilder = {
       return `INV-${raw.toUpperCase()}`;
     };
 
+    const formatFooter = (text, maxLen = lineWidth) => {
+      if (!text) return '';
+      return text.split('\n').map(line => {
+        // Automatically balance long default text if present without manual line breaks
+        if (line.includes('bukti pembayaran') && line.length > maxLen) {
+          line = line.replace('sebagai bukti pembayaran', 'sebagai\nbukti pembayaran');
+        }
+        if (line.length <= maxLen) return line;
+        const words = line.split(' ');
+        const lines = [];
+        let cur = '';
+        words.forEach(w => {
+          if ((cur ? cur + ' ' + w : w).length <= maxLen) {
+            cur = cur ? cur + ' ' + w : w;
+          } else {
+            if (cur) lines.push(cur);
+            cur = w;
+          }
+        });
+        if (cur) lines.push(cur);
+        return lines.join('\n');
+      }).join('\n');
+    };
+
     const invoiceNo = getInvoiceNumber(transaction);
     const dateStr = transaction.created_at ? new Date(transaction.created_at).toLocaleDateString('id-ID') : '-';
     const timeStr = transaction.created_at ? new Date(transaction.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-';
 
     let out = '';
+    // Reset printer state at the beginning
     out += CMD.INIT;
+    out += CMD.DOUBLE_OFF;
+    out += CMD.BOLD_OFF;
 
     // HEADER
     out += CMD.ALIGN_CENTER;
     out += CMD.BOLD_ON;
-    out += CMD.DOUBLE_ON;
-    out += 'SEKAWAN PUTRI POS\n';
-    out += CMD.DOUBLE_OFF;
+    if (paperSize === '80') {
+      out += CMD.DOUBLE_ON;
+      out += 'SEKAWAN PUTRI POS\n';
+      out += CMD.DOUBLE_OFF;
+    } else {
+      // 58mm printer has 32 chars normal, but only 16 chars in double-width.
+      // "SEKAWAN PUTRI POS" is 17 chars, so double-width pushes "S" to line 2.
+      // Using Double-Height only keeps it tall, bold, and neatly on ONE line!
+      out += CMD.DOUBLE_HEIGHT;
+      out += 'SEKAWAN PUTRI POS\n';
+      out += CMD.DOUBLE_OFF;
+    }
     out += CMD.BOLD_OFF;
 
     if (showAddress) {
@@ -124,10 +161,13 @@ export const EscPosBuilder = {
     // FOOTER
     out += CMD.ALIGN_CENTER;
     if (footerText) {
-      out += footerText + '\n';
+      out += formatFooter(footerText, lineWidth) + '\n';
     }
 
-    // FEED & CUT
+    // Reset styles & feed lines
+    out += CMD.DOUBLE_OFF;
+    out += CMD.BOLD_OFF;
+    out += CMD.ALIGN_LEFT;
     out += '\n\n\n\n';
     if (paperSize === '80') {
       out += CMD.CUT;
