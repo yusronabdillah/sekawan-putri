@@ -623,34 +623,38 @@ export default function Dashboard() {
               </div>
             ) : (
               <div>
-                <div style={{ padding: '16px 20px', backgroundColor: 'var(--danger-light)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <AlertTriangle size={20} color="var(--danger)" />
-                  <div>
-                    <div style={{ fontSize: '14px', fontWeight: '700', color: 'var(--danger)' }}>{stats.criticalStockItems.length} Produk Habis</div>
-                    <div style={{ fontSize: '12px', color: 'var(--danger)', opacity: 0.8 }}>Stok kosong, segera lakukan re-stock</div>
-                  </div>
-                </div>
-                {stats.criticalStockItems.slice(0, 5).map((item, idx) => (
-                  <div key={item.id} style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center', 
-                    padding: '16px 20px',
-                    borderBottom: idx !== Math.min(stats.criticalStockItems.length, 5) - 1 ? '1px solid var(--border)' : 'none'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--danger)' }}></div>
-                      <div style={{ fontWeight: '600', fontSize: '14px', color: 'var(--text-main)' }}>{item.name}</div>
+                {stats.criticalStockItems.length > 0 && (
+                  <>
+                    <div style={{ padding: '16px 20px', backgroundColor: 'var(--danger-light)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <AlertTriangle size={20} color="var(--danger)" />
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: '700', color: 'var(--danger)' }}>{stats.criticalStockItems.length} Produk Habis</div>
+                        <div style={{ fontSize: '12px', color: 'var(--danger)', opacity: 0.8 }}>Stok kosong, segera lakukan re-stock</div>
+                      </div>
                     </div>
-                    <div style={{ fontSize: '13px', fontWeight: '800', color: 'var(--danger)', backgroundColor: 'var(--danger-light)', padding: '4px 12px', borderRadius: '24px' }}>
-                      Sisa {item.stock}
-                    </div>
-                  </div>
-                ))}
-                {stats.criticalStockItems.length > 5 && (
-                  <div style={{ padding: '16px', textAlign: 'center', borderTop: '1px solid var(--border)', fontSize: '13px', color: 'var(--primary)', fontWeight: '700', cursor: 'pointer', transition: 'background-color 0.2s' }} className="hover-surface" onClick={() => window.location.hash = '#/inventory'}>
-                    Lihat {stats.criticalStockItems.length - 5} Produk Lainnya
-                  </div>
+                    {stats.criticalStockItems.slice(0, 5).map((item, idx) => (
+                      <div key={item.id} style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        padding: '16px 20px',
+                        borderBottom: idx !== Math.min(stats.criticalStockItems.length, 5) - 1 ? '1px solid var(--border)' : 'none'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--danger)' }}></div>
+                          <div style={{ fontWeight: '600', fontSize: '14px', color: 'var(--text-main)' }}>{item.name}</div>
+                        </div>
+                        <div style={{ fontSize: '13px', fontWeight: '800', color: 'var(--danger)', backgroundColor: 'var(--danger-light)', padding: '4px 12px', borderRadius: '24px' }}>
+                          Sisa {item.stock}
+                        </div>
+                      </div>
+                    ))}
+                    {stats.criticalStockItems.length > 5 && (
+                      <div style={{ padding: '16px', textAlign: 'center', borderTop: '1px solid var(--border)', fontSize: '13px', color: 'var(--primary)', fontWeight: '700', cursor: 'pointer', transition: 'background-color 0.2s' }} className="hover-surface" onClick={() => window.location.hash = '#/inventory'}>
+                        Lihat {stats.criticalStockItems.length - 5} Produk Lainnya
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
