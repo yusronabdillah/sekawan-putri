@@ -4,7 +4,12 @@ import { useAuthStore } from '../store/store';
 import { db } from '../db/db';
 import { hashPassword } from '../utils/hash';
 import { v4 as uuidv4 } from 'uuid';
-import { Store, User, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Store, User, Lock, Eye, EyeOff, Loader2, ShieldAlert, Clock } from 'lucide-react';
+
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MINUTES = 15;
+const LOCKOUT_TIME_MS = LOCKOUT_MINUTES * 60 * 1000;
+const SECURITY_STORAGE_KEY = 'sekawan_login_security';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -12,8 +17,41 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [lockoutRemaining, setLockoutRemaining] = useState(0);
   const loginStore = useAuthStore((state) => state.login);
   const navigate = useNavigate();
+
+  // Monitor and countdown lockout timer if locked out
+  useEffect(() => {
+    const checkLockout = () => {
+      try {
+        const raw = localStorage.getItem(SECURITY_STORAGE_KEY);
+        if (raw) {
+          const sec = JSON.parse(raw);
+          if (sec.lockoutUntil && sec.lockoutUntil > Date.now()) {
+            const diff = Math.ceil((sec.lockoutUntil - Date.now()) / 1000);
+            setLockoutRemaining(diff);
+            return;
+          } else if (sec.lockoutUntil && sec.lockoutUntil <= Date.now()) {
+            // Lockout period expired
+            localStorage.removeItem(SECURITY_STORAGE_KEY);
+            setLockoutRemaining(0);
+          }
+        }
+      } catch (_) {}
+      setLockoutRemaining(0);
+    };
+
+    checkLockout();
+    const interval = setInterval(checkLockout, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTimer = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
 
   useEffect(() => {
     // Seed default users if db is empty
@@ -62,6 +100,11 @@ export default function Login() {
     e.preventDefault();
     setError('');
     
+    if (lockoutRemaining > 0) {
+      setError(`Akses login sedang dikunci. Silakan tunggu ${formatTimer(lockoutRemaining)}.`);
+      return;
+    }
+
     if (!username || !password) {
       setError('Username dan Password wajib diisi');
       return;
@@ -85,11 +128,37 @@ export default function Login() {
 
       const hashedInput = await hashPassword(password);
       if (user.password_hash !== hashedInput) {
-        setError('Password salah');
+        // Track failed attempts
+        let attempts = 0;
+        try {
+          const raw = localStorage.getItem(SECURITY_STORAGE_KEY);
+          if (raw) {
+            const sec = JSON.parse(raw);
+            attempts = Number(sec.attempts) || 0;
+          }
+        } catch (_) {}
+
+        attempts += 1;
+        if (attempts >= MAX_ATTEMPTS) {
+          const lockoutUntil = Date.now() + LOCKOUT_TIME_MS;
+          localStorage.setItem(SECURITY_STORAGE_KEY, JSON.stringify({ attempts, lockoutUntil }));
+          setLockoutRemaining(Math.ceil(LOCKOUT_TIME_MS / 1000));
+          setError(`Terlalu banyak percobaan gagal (${MAX_ATTEMPTS}x). Akses login dikunci selama ${LOCKOUT_MINUTES} menit demi keamanan.`);
+        } else {
+          localStorage.setItem(SECURITY_STORAGE_KEY, JSON.stringify({ attempts, lockoutUntil: null }));
+          const remainingAttempts = MAX_ATTEMPTS - attempts;
+          setError(`Password salah. Sisa kesempatan: ${remainingAttempts}x sebelum akun dikunci.`);
+        }
+
         setLoading(false);
         return;
       }
       
+      // Reset failed attempts on successful login
+      try {
+        localStorage.removeItem(SECURITY_STORAGE_KEY);
+      } catch (_) {}
+
       // Cleanup sensitive data before storing in Zustand
       const userSession = { ...user };
       delete userSession.password_hash;
@@ -139,7 +208,39 @@ export default function Login() {
 
       <div className="card animate-scale-in" style={{ width: '100%', maxWidth: '420px', padding: '40px 32px', borderRadius: '24px', border: '1px solid rgba(229, 231, 235, 0.5)', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)', backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.9)', zIndex: 1, margin: 0 }}>
         
-        {error && (
+        {lockoutRemaining > 0 ? (
+          <div className="animate-fade-in" style={{ 
+            backgroundColor: '#fef2f2', 
+            border: '1.5px solid #fca5a5', 
+            color: '#991b1b', 
+            padding: '16px', 
+            borderRadius: '16px', 
+            marginBottom: '24px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '14px', 
+            textAlign: 'left' 
+          }}>
+            <div style={{ 
+              padding: '10px', 
+              backgroundColor: '#fee2e2', 
+              borderRadius: '50%', 
+              color: '#dc2626', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <ShieldAlert size={24} />
+            </div>
+            <div>
+              <div style={{ fontWeight: '700', fontSize: '14px', marginBottom: '2px' }}>Akses Login Dikunci Sementara</div>
+              <div style={{ fontSize: '13px', lineHeight: '1.4', color: '#b91c1c' }}>
+                Terlalu banyak percobaan gagal. Silakan tunggu <strong>{formatTimer(lockoutRemaining)}</strong>.
+              </div>
+            </div>
+          </div>
+        ) : error && (
           <div className="animate-fade-in" style={{ backgroundColor: 'var(--danger-light)', color: 'var(--danger)', padding: '14px 16px', borderRadius: '12px', marginBottom: '24px', fontSize: '14px', fontWeight: '500', display: 'flex', alignItems: 'center', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
             {error}
           </div>
@@ -156,8 +257,9 @@ export default function Login() {
                 value={username}
                 onChange={e => setUsername(e.target.value)}
                 placeholder="Masukkan username Anda"
+                disabled={loading || lockoutRemaining > 0}
                 required
-                style={{ borderRadius: '12px', minHeight: '52px' }}
+                style={{ borderRadius: '12px', minHeight: '52px', opacity: lockoutRemaining > 0 ? 0.6 : 1 }}
               />
             </div>
           </div>
@@ -172,10 +274,11 @@ export default function Login() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
+                disabled={loading || lockoutRemaining > 0}
                 required
-                style={{ borderRadius: '12px', minHeight: '52px' }}
+                style={{ borderRadius: '12px', minHeight: '52px', opacity: lockoutRemaining > 0 ? 0.6 : 1 }}
               />
-              <div className="input-group-append" onClick={() => setShowPassword(!showPassword)}>
+              <div className="input-group-append" onClick={() => !lockoutRemaining && setShowPassword(!showPassword)}>
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </div>
             </div>
@@ -190,17 +293,23 @@ export default function Login() {
                 fontSize: '16px', 
                 fontWeight: '700', 
                 borderRadius: '16px',
-                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
-                boxShadow: '0 10px 15px -3px rgba(79, 70, 229, 0.3)',
+                background: lockoutRemaining > 0 ? '#94a3b8' : 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
+                boxShadow: lockoutRemaining > 0 ? 'none' : '0 10px 15px -3px rgba(79, 70, 229, 0.3)',
                 display: 'flex',
-                gap: '8px'
+                gap: '8px',
+                cursor: (loading || lockoutRemaining > 0) ? 'not-allowed' : 'pointer'
               }}
-              disabled={loading}
+              disabled={loading || lockoutRemaining > 0}
             >
               {loading ? (
                 <>
                   <Loader2 size={20} className="animate-spin" />
                   <span>Mengautentikasi...</span>
+                </>
+              ) : lockoutRemaining > 0 ? (
+                <>
+                  <Clock size={20} />
+                  <span>Terkunci ({formatTimer(lockoutRemaining)})</span>
                 </>
               ) : (
                 'Masuk ke Sistem'

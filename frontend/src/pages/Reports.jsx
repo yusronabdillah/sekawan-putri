@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useReports } from '../hooks/useReports';
 import TransactionDetailModal from '../components/TransactionDetailModal';
 import Modal from '../components/Modal';
+import OwnerAuthModal from '../components/OwnerAuthModal';
 import { exportService } from '../services/exportService';
 import { 
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
@@ -82,6 +83,42 @@ export default function Reports() {
   
   // Slow Products UI
   const [slowThreshold, setSlowThreshold] = useState(5);
+  const [isOwnerAuthResetOpen, setIsOwnerAuthResetOpen] = useState(false);
+
+  const executeResetReports = async () => {
+    try {
+      if (window.navigator.onLine) {
+        try {
+          await apiClient.resetAllReports();
+        } catch (cloudErr) {
+          console.warn("Gagal menghapus sebagian data di cloud Firebase:", cloudErr);
+        }
+      }
+      
+      await db.transactions.clear();
+      await db.transaction_items.clear();
+      await db.cash_sessions.clear();
+      await db.expenses.clear();
+      if (db.stock_movements) {
+        await db.stock_movements.clear();
+      }
+      if (db.sync_queue) {
+        await db.sync_queue.clear();
+      }
+      
+      try {
+        await fetch('http://localhost:5000/api/transactions/reset-reports', {
+          method: 'DELETE',
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+      } catch (e) {}
+
+      alert("✓ Berhasil! Otorisasi Owner terverifikasi. Seluruh data laporan berhasil direset ke Rp 0.");
+      window.location.reload();
+    } catch (err) {
+      alert("Gagal reset laporan: " + err.message);
+    }
+  };
   
   const handleAddExpense = async (e) => {
     e.preventDefault();
@@ -809,46 +846,12 @@ export default function Reports() {
               {/* RESET BUTTON */}
               <div style={{ padding: '0', display: 'flex', justifyContent: 'center', width: '100%' }}>
                 <button 
-                  onClick={async () => {
-                    if (window.confirm("⚠️ KONFIRMASI RESET LAPORAN:\n\nApakah Anda yakin ingin mereset seluruh data transaksi dan pengeluaran? Semua omzet dan grafik laporan akan kembali bersih ke Rp 0. Data master produk & stok tetap aman.")) {
-                      try {
-                        if (window.navigator.onLine) {
-                          try {
-                            await apiClient.resetAllReports();
-                          } catch (cloudErr) {
-                            console.warn("Gagal menghapus sebagian data di cloud Firebase:", cloudErr);
-                          }
-                        }
-                        
-                        await db.transactions.clear();
-                        await db.transaction_items.clear();
-                        await db.cash_sessions.clear();
-                        await db.expenses.clear();
-                        if (db.stock_movements) {
-                          await db.stock_movements.clear();
-                        }
-                        if (db.sync_queue) {
-                          await db.sync_queue.clear();
-                        }
-                        
-                        try {
-                          await fetch('http://localhost:5000/api/transactions/reset-reports', {
-                            method: 'DELETE',
-                            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                          });
-                        } catch (e) {}
-
-                        alert("✓ Berhasil! Seluruh data laporan berhasil direset ke Rp 0.");
-                        window.location.reload();
-                      } catch (err) {
-                        alert("Gagal reset: " + err.message);
-                      }
-                    }
-                  }}
+                  onClick={() => setIsOwnerAuthResetOpen(true)}
                   style={{ backgroundColor: '#ef4444', color: 'white', padding: '12px 24px', borderRadius: '8px', fontWeight: 'bold', border: 'none', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  title="Reset Data Laporan (Otorisasi Owner)"
                 >
                   <RefreshCw size={18} />
-                  <span>Reset Seluruh Data Laporan & Transaksi ke Rp 0</span>
+                  <span>Reset Seluruh Data Laporan & Transaksi ke Rp 0 (Otorisasi Owner)</span>
                 </button>
               </div>
 
@@ -1406,6 +1409,16 @@ export default function Reports() {
           </div>
         </form>
       </Modal>
+
+      {/* Owner Auth Modal for Resetting Reports */}
+      <OwnerAuthModal
+        isOpen={isOwnerAuthResetOpen}
+        onClose={() => setIsOwnerAuthResetOpen(false)}
+        onSuccess={executeResetReports}
+        title="Otorisasi Reset Laporan"
+        description="PERINGATAN: Seluruh data transaksi penjualan, sesi kas, dan pengeluaran akan direset ke Rp 0. Data produk dan stok master TETAP AMAN. Masukkan password Owner untuk melanjutkan:"
+        actionText="Ya, Reset Laporan"
+      />
     </div>
   );
 }

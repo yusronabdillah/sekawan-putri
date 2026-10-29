@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
 import Modal from '../components/Modal';
+import OwnerAuthModal from '../components/OwnerAuthModal';
 import CustomSelect from '../components/CustomSelect';
 import CurrencyInput from '../components/CurrencyInput';
 import { Plus, Edit2, PackagePlus, FileUp, Upload, X, Search, Image as ImageIcon, Package, Trash2, RefreshCw, Barcode, Sparkles, AlertCircle } from 'lucide-react';
@@ -33,6 +34,9 @@ export default function Inventory() {
   const [barcodeConflict, setBarcodeConflict] = useState(null);
   const [isScannerSimulatorOpen, setIsScannerSimulatorOpen] = useState(false);
   const [toast, setToast] = useState(null);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [isDeleteAuthModalOpen, setIsDeleteAuthModalOpen] = useState(false);
+  const [isHardResetAuthModalOpen, setIsHardResetAuthModalOpen] = useState(false);
 
   const barcodeBufferRef = useRef('');
   const lastKeyTimeRef = useRef(0);
@@ -116,17 +120,34 @@ export default function Inventory() {
     }
   };
 
-  const handleHardReset = async () => {
-    if (window.confirm('PERINGATAN TAHAP 1: Anda akan menghapus SELURUH data produk secara permanen dari perangkat ini. Lanjutkan?')) {
-      const confirmation = window.prompt('KONFIRMASI TAHAP 2: Ketik "HAPUS" (huruf besar semua) untuk mengeksekusi penghapusan permanen:');
-      if (confirmation === 'HAPUS') {
-        await db.products.clear();
-        await db.sync_queue.clear();
-        alert('Database lokal berhasil dibersihkan! Layar akan dimuat ulang.');
-        window.location.reload();
-      } else {
-        alert('Penghapusan dibatalkan karena teks konfirmasi tidak sesuai.');
-      }
+  const handleHardReset = () => {
+    setIsHardResetAuthModalOpen(true);
+  };
+
+  const executeHardReset = async () => {
+    await db.products.clear();
+    await db.sync_queue.clear();
+    alert('✓ Database produk lokal berhasil dibersihkan! Layar akan dimuat ulang.');
+    window.location.reload();
+  };
+
+  const executeDeleteProduct = async () => {
+    if (!productToDelete) return;
+    try {
+      await db.products.delete(productToDelete.id);
+      await db.sync_queue.add({
+        id: uuidv4(),
+        entity: 'products',
+        action: 'DELETE',
+        payload: { id: productToDelete.id },
+        status: 'PENDING',
+        created_at: new Date().toISOString()
+      });
+      alert(`✓ Produk "${productToDelete.name}" berhasil dihapus permanen.`);
+      setProductToDelete(null);
+      loadProducts();
+    } catch (err) {
+      alert('Gagal menghapus produk: ' + err.message);
     }
   };
 
@@ -716,26 +737,11 @@ export default function Inventory() {
               </button>
               <button 
                 className="btn btn-secondary" 
-                style={{ padding: '8px', color: 'var(--text-muted)' }} 
-                onClick={async () => {
-                  if (window.confirm(`PERINGATAN TAHAP 1: Hapus permanen produk ${p.name}?`)) {
-                    const confirmation = window.prompt(`KONFIRMASI TAHAP 2: Ketik "HAPUS" untuk menghapus permanen produk ${p.name}:`);
-                    if (confirmation === 'HAPUS') {
-                      await db.products.delete(p.id);
-                      await db.sync_queue.add({
-                        id: uuidv4(),
-                        entity: 'products',
-                        action: 'DELETE',
-                        payload: { id: p.id },
-                        status: 'PENDING',
-                        created_at: new Date().toISOString()
-                      });
-                      alert('Produk berhasil dihapus permanen.');
-                      loadProducts();
-                    } else {
-                      alert('Penghapusan dibatalkan.');
-                    }
-                  }
+                style={{ padding: '8px', color: '#ef4444' }} 
+                title="Hapus Produk (Otorisasi Owner)"
+                onClick={() => {
+                  setProductToDelete(p);
+                  setIsDeleteAuthModalOpen(true);
                 }}
               >
                 <Trash2 size={16} />
@@ -1171,6 +1177,29 @@ export default function Inventory() {
           </div>
         </div>
       </AppDialog>
+
+      {/* Owner Auth Modal for Delete Product */}
+      <OwnerAuthModal
+        isOpen={isDeleteAuthModalOpen}
+        onClose={() => {
+          setIsDeleteAuthModalOpen(false);
+          setProductToDelete(null);
+        }}
+        onSuccess={executeDeleteProduct}
+        title="Hapus Produk Permanen"
+        description={`Anda akan menghapus produk "${productToDelete?.name || ''}" secara permanen dari sistem. Tindakan ini memerlukan otorisasi Owner. Masukkan password Owner:`}
+        actionText="Hapus Permanen"
+      />
+
+      {/* Owner Auth Modal for Database Hard Reset */}
+      <OwnerAuthModal
+        isOpen={isHardResetAuthModalOpen}
+        onClose={() => setIsHardResetAuthModalOpen(false)}
+        onSuccess={executeHardReset}
+        title="Reset Database Produk Lokal"
+        description="PERINGATAN: Anda akan menghapus SELURUH data produk di perangkat ini. Masukkan password Owner untuk mengeksekusi pembersihan:"
+        actionText="Ya, Bersihkan Database"
+      />
     </div>
   );
 }

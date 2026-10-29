@@ -3,6 +3,7 @@ import { useAuthStore, usePrinterStore, useCategoryStore, useBillScheduleStore }
 import { useNavigate } from 'react-router-dom';
 import { LogOut, User, Users, Settings as SettingsIcon, Info, HelpCircle, ChevronRight, Lock, RefreshCw, Printer, Package, Tag, Plus, Trash2, Calendar } from 'lucide-react';
 import Modal from '../components/Modal';
+import OwnerAuthModal from '../components/OwnerAuthModal';
 import CustomSelect from '../components/CustomSelect';
 import { PageHeader } from '../components/ui';
 import { db } from '../db/db';
@@ -19,6 +20,7 @@ export default function Settings() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isPrinterModalOpen, setIsPrinterModalOpen] = useState(false);
   const [isResetReportsModalOpen, setIsResetReportsModalOpen] = useState(false);
+  const [isOwnerAuthResetOpen, setIsOwnerAuthResetOpen] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
@@ -699,14 +701,27 @@ export default function Settings() {
               type="button" 
               className="btn btn-danger" 
               style={{ flex: 1, height: '46px', fontWeight: '700' }}
-              onClick={handleResetReports}
+              onClick={() => {
+                setIsResetReportsModalOpen(false);
+                setIsOwnerAuthResetOpen(true);
+              }}
               disabled={isResetting}
             >
-              {isResetting ? 'Mereset Data...' : 'Ya, Bersihkan Laporan'}
+              Lanjutkan ke Verifikasi Owner
             </button>
           </div>
         </div>
       </Modal>
+
+      {/* Owner Auth Modal for Settings Reset */}
+      <OwnerAuthModal
+        isOpen={isOwnerAuthResetOpen}
+        onClose={() => setIsOwnerAuthResetOpen(false)}
+        onSuccess={handleResetReports}
+        title="Otorisasi Reset Laporan"
+        description="PERINGATAN: Seluruh riwayat transaksi penjualan, kas, dan pengeluaran akan direset ke Rp 0. Data master produk dan stok TETAP AMAN. Masukkan password Owner:"
+        actionText="Konfirmasi & Bersihkan"
+      />
 
     </div>
   );
