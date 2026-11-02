@@ -116,8 +116,8 @@ export const useCategoryStore = create(
       parentMapping: {
         'Frozen Food': 'Kategori A',
         'Minuman': 'Kategori A',
-        'Sembako': 'Kategori A',
-        'Kebutuhan Rumah': 'Kategori A',
+        'Sembako': 'Kategori B',
+        'Kebutuhan Rumah': 'Kategori B',
         'Sayur': 'Kategori B',
         'Buah': 'Kategori B',
         'Bumbu Dapur': 'Kategori B',
@@ -143,6 +143,19 @@ export const useCategoryStore = create(
     }),
     {
       name: 'sekawan-category-storage-v2',
+      version: 1,
+      // One-time migration: pindahkan Sembako & Kebutuhan Rumah ke Kategori B
+      // (permintaan Nafa). Hanya mengubah pemetaan tab, tidak menyentuh data produk.
+      migrate: (persistedState, version) => {
+        if (version < 1 && persistedState) {
+          persistedState.parentMapping = {
+            ...(persistedState.parentMapping || {}),
+            'Sembako': 'Kategori B',
+            'Kebutuhan Rumah': 'Kategori B'
+          };
+        }
+        return persistedState;
+      },
       merge: (persistedState, currentState) => {
         const validCategories = currentState.categories;
         const persistedCats = persistedState?.categories?.filter(c => c !== 'Endog') || [];
@@ -154,7 +167,9 @@ export const useCategoryStore = create(
           categories: mergedCategories,
           parentMapping: {
             ...currentState.parentMapping,
-            ...(persistedState?.parentMapping || {})
+            ...(persistedState?.parentMapping || {}),
+            'Sembako': 'Kategori B',
+            'Kebutuhan Rumah': 'Kategori B'
           }
         };
       }
