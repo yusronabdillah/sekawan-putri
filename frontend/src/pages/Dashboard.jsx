@@ -296,11 +296,11 @@ export default function Dashboard() {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px', zIndex: 1 }}>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)', overflow: 'hidden', border: '2px solid white' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: DEMO_CONFIG.isDemo ? '12px' : '50%', backgroundColor: DEMO_CONFIG.isDemo ? '#0a0a0a' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)', overflow: 'hidden', border: '2px solid white' }}>
               <img 
-                src="./logo_toko.jpeg" 
+                src={DEMO_CONFIG.isDemo ? "/logo-kopisore.png" : "./logo_toko.jpeg"} 
                 alt="Logo Sekawan Putri" 
-                style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.35)' }} 
+                style={{ width: '100%', height: '100%', objectFit: DEMO_CONFIG.isDemo ? 'contain' : 'cover', transform: DEMO_CONFIG.isDemo ? 'none' : 'scale(1.35)' }} 
                 onError={(e) => { 
                   e.target.style.display = 'none'; 
                   e.target.nextSibling.style.display = 'flex';

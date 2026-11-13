@@ -188,19 +188,20 @@ export default function Login() {
           height: '120px', 
           width: '120px', 
           margin: '0 auto 16px auto', 
-          borderRadius: '50%',
+          borderRadius: DEMO_CONFIG.isDemo ? '20px' : '50%',
           overflow: 'hidden',
-          backgroundColor: 'white',
+          backgroundColor: DEMO_CONFIG.isDemo ? '#0a0a0a' : 'white',
+          border: DEMO_CONFIG.isDemo ? '2px solid #d4af37' : 'none',
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
         }}>
           <img 
-            src="/logo-login.jpg" 
+            src={DEMO_CONFIG.isDemo ? "/logo-kopisore.png" : "/logo-login.jpg"} 
             alt="Sekawan Putri Logo" 
             style={{ 
               height: '100%', 
               width: '100%', 
-              objectFit: 'cover',
-              transform: 'scale(1.55)'
+              objectFit: DEMO_CONFIG.isDemo ? 'contain' : 'cover',
+              transform: DEMO_CONFIG.isDemo ? 'none' : 'scale(1.55)'
             }} 
           />
         </div>
@@ -243,7 +244,7 @@ export default function Login() {
             <div style={{ 
               padding: '10px', 
               backgroundColor: '#fee2e2', 
-              borderRadius: '50%', 
+              borderRadius: DEMO_CONFIG.isDemo ? '20px' : '50%', 
               color: '#dc2626', 
               display: 'flex', 
               alignItems: 'center', 

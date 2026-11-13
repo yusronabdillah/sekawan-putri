@@ -99,7 +99,7 @@ function AppContent() {
         <header className="header">
           <div className="container header-container">
             <Link to="/" className="logo" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-              <img src="/logo.png?v=2" alt="Logo Toko" className="logo-img" />
+              <img src={DEMO_CONFIG.isDemo ? "/logo-kopisore.png" : "/logo.png?v=2"} alt="Logo Toko" className="logo-img" style={DEMO_CONFIG.isDemo ? { objectFit: 'contain', borderRadius: '6px', backgroundColor: '#0a0a0a', padding: '2px', border: '1px solid #d4af37' } : {}} />
               <div className="logo-brand">
                 <span className="logo-title">{import.meta.env.VITE_STORE_NAME || DEMO_CONFIG.storeName || 'Sekawan Putri'}</span>
                 <span className="logo-subtitle">{import.meta.env.VITE_STORE_SUBTITLE || DEMO_CONFIG.storeSubtitle || 'Frozen Food & Sayur Segar'}</span>
