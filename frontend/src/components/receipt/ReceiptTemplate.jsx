@@ -1,12 +1,20 @@
 import React from 'react';
+import { DEMO_CONFIG } from '../../config/demoConfig';
 
 const ReceiptTemplate = React.forwardRef(({ transaction, config }, ref) => {
   if (!transaction) return null;
 
+  const storeName = import.meta.env.VITE_STORE_NAME || DEMO_CONFIG.storeName || 'SEKAWAN PUTRI';
+  const storeAddress = import.meta.env.VITE_STORE_ADDRESS || DEMO_CONFIG.storeAddress || 'Jl. Tirto Rahayu No.12 A, Dau';
+  const storePhone = import.meta.env.VITE_STORE_PHONE || DEMO_CONFIG.storePhone || 'Telp/WA: 0857-7558-6209';
+  const defaultFooter = DEMO_CONFIG.isDemo 
+    ? 'Terima kasih telah berbelanja di Kopi Sore 67\nSimplify Your Day\nkopisore67.com'
+    : 'Terima kasih telah berbelanja\nSimpan struk ini sebagai\nbukti pembayaran';
+
   const {
     paperSize = '58',
     showAddress = true,
-    footerText = 'Terima kasih telah berbelanja\nSimpan struk ini sebagai\nbukti pembayaran',
+    footerText = defaultFooter,
     marginTop = 0,
     marginBottom = 10,
     fontSize = 'normal'
@@ -64,11 +72,13 @@ const ReceiptTemplate = React.forwardRef(({ transaction, config }, ref) => {
     >
       {/* HEADER */}
       <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-        <div style={{ fontWeight: 'bold', fontSize: headerFontSize, marginBottom: '2px' }}>SEKAWAN PUTRI POS</div>
+        <div style={{ fontWeight: 'bold', fontSize: headerFontSize, marginBottom: '2px' }}>
+          {`${storeName.toUpperCase()} POS`}
+        </div>
         {showAddress && (
           <div style={{ fontSize: baseFontSize }}>
-            Jl. Tirto Rahayu No.12 A, Dau<br />
-            Telp/WA: 0857-7558-6209
+            {storeAddress}<br />
+            {storePhone}
           </div>
         )}
       </div>

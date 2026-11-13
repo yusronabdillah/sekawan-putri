@@ -11,8 +11,10 @@ import Articles from './pages/Articles';
 import ArticleDetail from './pages/ArticleDetail';
 import About from './pages/About';
 import { DEFAULT_ARTICLES } from './utils/articlesData';
+import { DEMO_CONFIG } from './demoConfig';
 
-const WA_NUMBER = "6285775586209";
+const WA_NUMBER = import.meta.env.VITE_WA_NUMBER || DEMO_CONFIG.waNumber || "6285775586209";
+const COLLECTION_PREFIX = import.meta.env.VITE_COLLECTION_PREFIX || DEMO_CONFIG.collectionPrefix || 'demo_kopisore_';
 
 function AppContent() {
   const [products, setProducts] = useState([]);
@@ -56,7 +58,8 @@ function AppContent() {
   };
 
   useEffect(() => {
-    const q = collection(firestore, 'products');
+    const targetCollection = `${COLLECTION_PREFIX}products`;
+    const q = collection(firestore, targetCollection);
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetchedProducts = [];
       snapshot.forEach(doc => {
@@ -70,7 +73,8 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
-    const q = collection(firestore, 'articles');
+    const targetCollection = `${COLLECTION_PREFIX}articles`;
+    const q = collection(firestore, targetCollection);
     const unsubscribe = onSnapshot(q, (snapshot) => {
       if (!snapshot.empty) {
         const fetchedArticles = [];
@@ -95,10 +99,10 @@ function AppContent() {
         <header className="header">
           <div className="container header-container">
             <Link to="/" className="logo" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-              <img src="/logo.png?v=2" alt="Sekawan Putri Logo" className="logo-img" />
+              <img src="/logo.png?v=2" alt="Logo Toko" className="logo-img" />
               <div className="logo-brand">
-                <span className="logo-title">Sekawan Putri</span>
-                <span className="logo-subtitle">Frozen Food & Sayur Segar</span>
+                <span className="logo-title">{import.meta.env.VITE_STORE_NAME || DEMO_CONFIG.storeName || 'Sekawan Putri'}</span>
+                <span className="logo-subtitle">{import.meta.env.VITE_STORE_SUBTITLE || DEMO_CONFIG.storeSubtitle || 'Frozen Food & Sayur Segar'}</span>
               </div>
             </Link>
 
@@ -287,7 +291,7 @@ function AppContent() {
               </div>
 
               <div className="footer-copyright" style={{flexWrap: 'wrap'}}>
-                <span>&copy; {new Date().getFullYear()} Sekawan Putri Frozen Food.</span>
+                <span>&copy; {new Date().getFullYear()} {import.meta.env.VITE_STORE_NAME || DEMO_CONFIG.storeName || 'Sekawan Putri'}.</span>
                 <span style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
                   Powered by 
                   <a href="https://www.naikomzet.web.id/" target="_blank" rel="noreferrer" style={{display: 'inline-flex', alignItems: 'center'}}>

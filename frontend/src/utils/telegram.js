@@ -1,5 +1,18 @@
+import { DEMO_CONFIG } from '../config/demoConfig';
+
 export const sendTelegramNotification = async (transaction) => {
     try {
+        const isDemo = DEMO_CONFIG.isDemo || 
+                       DEMO_CONFIG.disableTelegram || 
+                       import.meta.env.VITE_IS_DEMO === 'true' || 
+                       import.meta.env.VITE_DISABLE_TELEGRAM === 'true' || 
+                       Boolean(import.meta.env.VITE_COLLECTION_PREFIX);
+                       
+        if (isDemo) {
+            console.log('[DEMO MODE] Telegram notification suppressed to protect production business data.');
+            return false;
+        }
+
         const token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
         const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
         

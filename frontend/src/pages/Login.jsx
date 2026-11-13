@@ -5,6 +5,7 @@ import { db } from '../db/db';
 import { hashPassword } from '../utils/hash';
 import { v4 as uuidv4 } from 'uuid';
 import { Store, User, Lock, Eye, EyeOff, Loader2, ShieldAlert, Clock } from 'lucide-react';
+import { DEMO_CONFIG } from '../config/demoConfig';
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MINUTES = 15;
@@ -203,10 +204,28 @@ export default function Login() {
             }} 
           />
         </div>
-        <p style={{ color: 'var(--text-muted)', fontSize: '15px', fontWeight: '500', margin: 0 }}>Point of Sale System</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '15px', fontWeight: '500', margin: 0 }}>
+          {`${import.meta.env.VITE_STORE_NAME || DEMO_CONFIG.storeName || 'Sekawan Putri'} POS`}
+        </p>
       </div>
 
       <div className="card animate-scale-in" style={{ width: '100%', maxWidth: '420px', padding: '40px 32px', borderRadius: '24px', border: '1px solid rgba(229, 231, 235, 0.5)', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)', backdropFilter: 'blur(10px)', backgroundColor: 'rgba(255, 255, 255, 0.9)', zIndex: 1, margin: 0 }}>
+        
+        {(DEMO_CONFIG.isDemo || import.meta.env.VITE_IS_DEMO === 'true' || import.meta.env.VITE_COLLECTION_PREFIX) && (
+          <div style={{
+            background: '#fef3c7',
+            border: '1px solid #fde68a',
+            color: '#92400e',
+            borderRadius: '12px',
+            padding: '10px 14px',
+            fontSize: '12px',
+            marginBottom: '20px',
+            lineHeight: '1.5'
+          }}>
+            ☕ <b>Demo Kopi Sore 67</b><br />
+            Gunakan akun: <b>owner</b> / password: <b>owner</b> (atau <b>kasir</b> / <b>kasir</b>)
+          </div>
+        )}
         
         {lockoutRemaining > 0 ? (
           <div className="animate-fade-in" style={{ 

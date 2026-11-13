@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore, useBillScheduleStore } from '../store/store';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
+import { DEMO_CONFIG } from '../config/demoConfig';
 import { 
   TrendingUp, 
   Activity, 
@@ -314,6 +315,9 @@ export default function Dashboard() {
               <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-0.5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 {getGreeting()}, {user?.name?.split(' ')[0] || 'Admin'} 👋
               </h1>
+              <p style={{ margin: '2px 0 0 0', color: 'var(--text-muted)', fontSize: '13px', fontWeight: '500' }}>
+                {import.meta.env.VITE_STORE_NAME || DEMO_CONFIG.storeName || 'Sekawan Putri'} &bull; {import.meta.env.VITE_STORE_TAGLINE || DEMO_CONFIG.storeTagline || 'POS & Manajemen Stok'}
+              </p>
             </div>
           </div>
 

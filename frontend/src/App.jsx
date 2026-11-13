@@ -96,6 +96,13 @@ export default function App() {
           const { syncService } = await import('./services/syncService');
           await syncService.pullData();
         }
+
+        // Jika dalam mode demo Kopi Sore, inisialisasi data produk demo otomatis
+        const isDemo = import.meta.env.VITE_IS_DEMO === 'true' || Boolean(import.meta.env.VITE_COLLECTION_PREFIX);
+        if (isDemo) {
+          const { seedDemoKopiSore } = await import('./db/seedDemoData');
+          await seedDemoKopiSore();
+        }
       } catch (e) {
         console.error('[MIGRATION ERROR]', e);
       }

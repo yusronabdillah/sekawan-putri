@@ -1,6 +1,8 @@
 import Dexie from 'dexie';
+import { DEMO_CONFIG } from '../config/demoConfig';
 
-export const db = new Dexie('SekawanPutriDB');
+const dbName = import.meta.env.VITE_DB_NAME || DEMO_CONFIG.dbName || 'SekawanPutriDB';
+export const db = new Dexie(dbName);
 
 db.version(4).stores({
   users: 'id, username, role, name, phone, status',

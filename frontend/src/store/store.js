@@ -100,29 +100,51 @@ export const usePrinterStore = create(
   )
 );
 
+const isDemoMode = import.meta.env.VITE_IS_DEMO === 'true' || Boolean(import.meta.env.VITE_COLLECTION_PREFIX);
+
+const DEFAULT_CATEGORIES = isDemoMode
+  ? [
+      'Robusta Nusantara',
+      'Arabika & Specialty',
+      'Kopi Grosir & Warkop',
+      'Bahan Baku & Sirup',
+      'Packaging & Cup'
+    ]
+  : [
+      'Frozen Food', 
+      'Sayur', 
+      'Buah', 
+      'Bumbu Dapur', 
+      'Sembako', 
+      'Minuman', 
+      'Ice Cream', 
+      'Kebutuhan Rumah'
+    ];
+
+const DEFAULT_PARENT_MAPPING = isDemoMode
+  ? {
+      'Robusta Nusantara': 'Kategori A',
+      'Arabika & Specialty': 'Kategori A',
+      'Kopi Grosir & Warkop': 'Kategori A',
+      'Bahan Baku & Sirup': 'Kategori B',
+      'Packaging & Cup': 'Kategori B'
+    }
+  : {
+      'Frozen Food': 'Kategori A',
+      'Minuman': 'Kategori A',
+      'Sembako': 'Kategori B',
+      'Kebutuhan Rumah': 'Kategori B',
+      'Sayur': 'Kategori B',
+      'Buah': 'Kategori B',
+      'Bumbu Dapur': 'Kategori B',
+      'Ice Cream': 'Kategori B'
+    };
+
 export const useCategoryStore = create(
   persist(
     (set) => ({
-      categories: [
-        'Frozen Food', 
-        'Sayur', 
-        'Buah', 
-        'Bumbu Dapur', 
-        'Sembako', 
-        'Minuman', 
-        'Ice Cream', 
-        'Kebutuhan Rumah'
-      ],
-      parentMapping: {
-        'Frozen Food': 'Kategori A',
-        'Minuman': 'Kategori A',
-        'Sembako': 'Kategori B',
-        'Kebutuhan Rumah': 'Kategori B',
-        'Sayur': 'Kategori B',
-        'Buah': 'Kategori B',
-        'Bumbu Dapur': 'Kategori B',
-        'Ice Cream': 'Kategori B'
-      },
+      categories: DEFAULT_CATEGORIES,
+      parentMapping: DEFAULT_PARENT_MAPPING,
       addCategory: (cat, parent = 'Kategori A') => set((state) => {
         if (!state.categories.includes(cat)) {
           return { 
@@ -142,7 +164,7 @@ export const useCategoryStore = create(
       })
     }),
     {
-      name: 'sekawan-category-storage-v2',
+      name: isDemoMode ? 'kopisore-category-storage-v1' : 'sekawan-category-storage-v2',
       version: 1,
       // One-time migration: pindahkan Sembako & Kebutuhan Rumah ke Kategori B
       // (permintaan Nafa). Hanya mengubah pemetaan tab, tidak menyentuh data produk.

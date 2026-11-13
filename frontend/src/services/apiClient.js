@@ -2,6 +2,10 @@ import { firestore } from '../config/firebase';
 import { doc, setDoc, deleteDoc, collection, getDocs, onSnapshot, writeBatch } from 'firebase/firestore';
 import { logger } from '../utils/logger';
 import { sendTelegramNotification } from '../utils/telegram';
+import { DEMO_CONFIG } from '../config/demoConfig';
+
+const COLLECTION_PREFIX = import.meta.env.VITE_COLLECTION_PREFIX || DEMO_CONFIG.collectionPrefix || 'demo_kopisore_';
+const getEntityName = (entity) => `${COLLECTION_PREFIX}${entity}`;
 
 export const apiClient = {
   /**
@@ -15,23 +19,24 @@ export const apiClient = {
       throw new Error(`Payload must have an id for Firestore sync. Entity: ${entity}`);
     }
 
-    const docRef = doc(firestore, entity, payload.id);
+    const targetCollection = getEntityName(entity);
+    const docRef = doc(firestore, targetCollection, payload.id);
 
     try {
-      console.log(`[PUSH-FIREBASE] Memulai push data ke Firebase. Entity: ${entity}, Action: ${action}, ID: ${payload.id}`);
+      console.log(`[PUSH-FIREBASE] Memulai push data ke Firebase. Entity: ${targetCollection}, Action: ${action}, ID: ${payload.id}`);
       if (action === 'CREATE' || action === 'UPDATE') {
         // We use setDoc with merge: true to avoid overwriting existing documents
         // with partial payloads (e.g. stock updates).
         await setDoc(docRef, payload, { merge: true });
-        console.log(`[PUSH-FIREBASE] Sukses merge document ${entity}/${payload.id}`);
+        console.log(`[PUSH-FIREBASE] Sukses merge document ${targetCollection}/${payload.id}`);
       } else if (action === 'DELETE') {
         await deleteDoc(docRef);
-        console.log(`[PUSH-FIREBASE] Sukses delete document ${entity}/${payload.id}`);
+        console.log(`[PUSH-FIREBASE] Sukses delete document ${targetCollection}/${payload.id}`);
       } else {
         throw new Error(`Unknown action: ${action}`);
       }
       
-      logger.info(`[Firebase Sync] Success: ${action} ${entity}/${payload.id}`);
+      logger.info(`[Firebase Sync] Success: ${action} ${targetCollection}/${payload.id}`);
       
       // TRIGGER TELEGRAM NOTIFICATION ON NEW TRANSACTION SYNC
       if (entity === 'transactions' && action === 'CREATE') {
@@ -61,16 +66,17 @@ export const apiClient = {
    * @returns {Promise<Array>} Array of documents
    */
   pullCollection: async (entity) => {
+    const targetCollection = getEntityName(entity);
     try {
-      const querySnapshot = await getDocs(collection(firestore, entity));
+      const querySnapshot = await getDocs(collection(firestore, targetCollection));
       const data = [];
       querySnapshot.forEach((doc) => {
         data.push({ id: doc.id, ...doc.data() });
       });
-      logger.info(`[Firebase Sync] Pulled ${data.length} items from ${entity}`);
+      logger.info(`[Firebase Sync] Pulled ${data.length} items from ${targetCollection}`);
       return data;
     } catch (error) {
-      logger.error(`[Firebase Pull Error] for ${entity}:`, error);
+      logger.error(`[Firebase Pull Error] for ${targetCollection}:`, error);
       throw error;
     }
   },
@@ -82,8 +88,9 @@ export const apiClient = {
    * @returns {function} Unsubscribe function
    */
   listenToCollection: (entity, onChange) => {
+    const targetCollection = getEntityName(entity);
     try {
-      const q = collection(firestore, entity);
+      const q = collection(firestore, targetCollection);
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const changes = [];
         snapshot.docChanges().forEach((change) => {
@@ -97,11 +104,11 @@ export const apiClient = {
           onChange(changes);
         }
       }, (error) => {
-        logger.error(`[Firebase onSnapshot Error] for ${entity}:`, error);
+        logger.error(`[Firebase onSnapshot Error] for ${targetCollection}:`, error);
       });
       return unsubscribe;
     } catch (error) {
-      logger.error(`[Firebase listenToCollection Error] for ${entity}:`, error);
+      logger.error(`[Firebase listenToCollection Error] for ${targetCollection}:`, error);
       throw error;
     }
   },
@@ -112,21 +119,22 @@ export const apiClient = {
    * @returns {Promise<number>} Number of deleted docs
    */
   clearCollection: async (entity) => {
+    const targetCollection = getEntityName(entity);
     try {
-      const snap = await getDocs(collection(firestore, entity));
+      const snap = await getDocs(collection(firestore, targetCollection));
       if (snap.docs.length === 0) return 0;
 
       const CHUNK_SIZE = 200;
       for (let i = 0; i < snap.docs.length; i += CHUNK_SIZE) {
         const chunk = snap.docs.slice(i, i + CHUNK_SIZE);
         const batch = writeBatch(firestore);
-        chunk.forEach(d => batch.delete(doc(firestore, entity, d.id)));
+        chunk.forEach(d => batch.delete(doc(firestore, targetCollection, d.id)));
         await batch.commit();
       }
-      logger.info(`[Firebase Sync] Cleared ${snap.docs.length} items from ${entity}`);
+      logger.info(`[Firebase Sync] Cleared ${snap.docs.length} items from ${targetCollection}`);
       return snap.docs.length;
     } catch (error) {
-      logger.error(`[Firebase Clear Error] for ${entity}:`, error);
+      logger.error(`[Firebase Clear Error] for ${targetCollection}:`, error);
       throw error;
     }
   },

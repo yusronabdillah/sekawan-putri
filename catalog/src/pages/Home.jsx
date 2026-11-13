@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Calendar, Clock, ArrowRight, BookOpen } from 'lucide-react';
 import ProductIllustration from '../components/ProductIllustration';
+import { DEMO_CONFIG } from '../demoConfig';
 
 export default function Home({ products, articles = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,8 +12,12 @@ export default function Home({ products, articles = [] }) {
   const gridRef = React.useRef(null);
   const location = useLocation();
 
+  const storeName = import.meta.env.VITE_STORE_NAME || DEMO_CONFIG.storeName || '';
+
   useEffect(() => {
-    document.title = 'Sekawan Putri - Katalog Frozen Food & Sayur Segar Dau, Malang';
+    document.title = storeName 
+      ? `${storeName} — Official Online Store Biji & Bubuk Kopi`
+      : 'Sekawan Putri - Katalog Frozen Food & Sayur Segar Dau, Malang';
     if (location.hash === '#produk' || window.location.hash === '#produk') {
       const scroll = () => {
         const el = document.getElementById('produk');
@@ -127,7 +132,13 @@ export default function Home({ products, articles = [] }) {
     <main className="container">
       {/* BANNER HERO SECTION */}
       <section style={{ margin: '24px auto 48px auto', width: '100%', maxWidth: '1000px', aspectRatio: '1376 / 768', borderRadius: '24px', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
-        <img src="/banner.jpg?v=3" alt="Selamat Datang di Sekawan Putri Frozen Food" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        <img 
+          src={(import.meta.env.VITE_IS_DEMO === 'true' || DEMO_CONFIG.isDemo)
+            ? 'https://images.unsplash.com/photo-1498804103079-a6351b050096?w=1200&auto=format&fit=crop&q=80' 
+            : '/banner.jpg?v=3'} 
+          alt={storeName ? `Katalog ${storeName}` : "Selamat Datang di Sekawan Putri Frozen Food"} 
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} 
+        />
       </section>
 
       {/* CATALOG SECTION */}

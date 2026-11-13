@@ -340,11 +340,32 @@ export default function CheckoutModal({ isOpen, onClose, onEditPesanan, cart, to
                     <h3 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '4px', color: 'var(--primary)', textTransform: 'uppercase' }}>QRIS</h3>
                     
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '12px 0' }}>
-                      <img 
-                        src={qrisImage} 
-                        alt="QRIS Nafa Frozen Food" 
-                        style={{ width: '100%', maxWidth: '200px', height: 'auto', objectFit: 'contain', borderRadius: '12px' }} 
-                      />
+                      {(import.meta.env.VITE_IS_DEMO === 'true' || import.meta.env.VITE_COLLECTION_PREFIX) ? (
+                        <div style={{
+                          width: '180px',
+                          height: '180px',
+                          border: '2px dashed #92400e',
+                          borderRadius: '16px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: '#fef3c7',
+                          color: '#92400e',
+                          padding: '12px',
+                          textAlign: 'center'
+                        }}>
+                          <span style={{ fontSize: '36px', marginBottom: '4px' }}>☕</span>
+                          <b style={{ fontSize: '13px' }}>QRIS Demo</b>
+                          <span style={{ fontSize: '11px', marginTop: '2px' }}>Kopi Sore 67</span>
+                        </div>
+                      ) : (
+                        <img 
+                          src={qrisImage} 
+                          alt="QRIS Toko" 
+                          style={{ width: '100%', maxWidth: '200px', height: 'auto', objectFit: 'contain', borderRadius: '12px' }} 
+                        />
+                      )}
                     </div>
                     
                     <div style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', padding: '12px 16px', borderRadius: '12px', width: '100%' }}>
